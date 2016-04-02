@@ -1,0 +1,18 @@
+\chapter{Útoky na šifrovanie}
+\paragraph{}
+V nasledovnej kapitole popíšeme možnosti útokov na používateľské heslá. Všetky nižšie vymenované typy útokov patria spoločne do kategórie útokov hrubou silou, keďže ich cieľom je nájsť používateľské heslo pomocou prehľadávania všetkých možností. 
+\section{Inkrementálna metóda}
+\paragraph{}
+Inkrementálna metóda je pravdepodobne najintuitívnejší útok hrubou silou. Pri tomto type útoku útočník generuje všetky reťazce vstupnej abecedy kratšie ako stanovená maximálna dĺžka hľadaného hesla. Ak poznáme túto maximálnu dĺžku hľadaného hesla, tak tento prístup ma 100 percentnú úspešnosť keďže prehľadá celý priestor možných hesiel. Avšak týchto hesiel je <strasne vela, treba dosadit vzorec>, čo by pri skúšaní <pekna konstanta> hesiel za sekundu trvalo dokopy <ohurujuce cislo> rokov.
+
+\section{Slovníkový útok}
+\paragraph{}
+Iná možnosť ako skúšať všetky možné kombinácie znakov je skúšať heslá, ktoré sú často používane alebo majú nejaký konkrétny význam pre používateľa. Z týchto slov vystaviame slovník pomocou ktorého následne skúšame či sa nám podarilo nájsť správne heslo. Keďže slovník použitý pri útoku sami pripravíme vyskúšanie všetky hesiel, ktoré obsahuje, bude uskutočniteľné v rozumne krátkom čase. Vďaka tomuto patrí medzi najpopulárnejšie metódy útoku. Avšak úspešnosť tohto útoku je závislá od hesiel, ktoré pridáme do slovníku. V tomto probléme nám môže pomôcť fakt, že hľadáme stratené heslo, čiže používateľ dokáže poskytnúť veľké množstvo potenciálnych hesiel, ktoré majú vysokú pravdepodobnosť úspechu. 
+
+\subsection{Prekrúcanie slov}
+\paragraph{}
+Avšak samotný používateľ nemusí vedieť hľadané heslo, ktoré by sa mohlo líšiť od niektorého v slovníku len v jednom znaku, napríklad vo veľkom alebo malom písmene. Preto sa často so slovníkovým útokom používa takzvané prekrúcanie slov, ktoré pomocou predom definovaných pravidiel skúsi znetvoriť postupne každé heslo zo slovníka. Týmto výrazne zväčší veľkosť slovníka čím zvýši šancu na úspech a zmizne potreba ručne generovať stovky tisíc hesiel. 
+
+\section{Hybridný útok}
+\paragraph{}
+Metóda, ktorou sa zaoberáme v tejto práci a ktorú sme implementovali je hybrid vytvorený zo všetkých vyššie uvedených. Našim hlavným cieľom je nájsť hľadané heslo v konečnom čase. Preto sa budeme snažiť vytvoriť algoritmus, ktorý vygeneruje všetky možné reťazce kratšie ako zadaná maximálna dĺžka, avšak aby sme tento čas minimalizovali tak pomocou slovníka, obsahujúceho známe často používané heslá a heslá o ktorých si používateľ myslí, že by mohli byť hľadaným heslom. Naštudujeme si štruktúru hesiel aké používateľ používa. Z týchto znalostí si vytvoríme pravidlá pomocou ktorých budeme generovať naše finálne pokusy na odšifrovanie cieľového disku.

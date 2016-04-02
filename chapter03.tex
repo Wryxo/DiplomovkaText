@@ -1,0 +1,11 @@
+\chapter{Učenie}
+Ako sme spomínali vyššie v texte, náš program bude generovať heslá na základe nejakých znalostí. Tento proces učenia sa, sa dá implementovať pomocou viacerých známych metodík medzi, ktoré patria napríklad neurónové siete alebo pravdepodobnostné gramatiky.
+
+\section{Neuronové siete}
+\paragraph{}
+
+
+\section{Pravdepodobnostné bezkontextové gramatiky}
+\paragraph{}
+Bezkontextové gramatiky používajú pravidlá pri ktorých sa neterminál môže zmeniť na ľubovoľnú vetnú formu bez ohľadu na kontext v ktorom sa nachádza. Pravdepodobnostné gramatiky vzniknú keď každému pravidlu priradíme číslo v rozmedzí 0 a 1. Toto číslo vyjadruje pravdepodobnosť použitia daného pravidla pre jeho neterminál, súčet pravdepodobností jedného neterminálu by mal byť 1. Následne pravdepodobnosť terminálnej vetnej formy je rovná súčinu pravdepodobností pravidiel použitých v jej odvodení. V gramatikách je možné a častokrát až bežné aby jedna terminálna vetná forma mala viacero stromov odvodenia, poradí použitia pravidiel. My sme sa tejto vlastnosti snažili vyhnúť, pretože by sme zbytočne generovali jedno heslo viac krát.
+
