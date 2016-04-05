@@ -1,0 +1,16 @@
+\chapter{Testy}
+
+\paragraph{}
+Cieľom tejto kapitoly je podrobne popisať testy, ktoré slúžia k vyhodnoteniu efektivity a správanosti nášho algoritmu voči iným bežne dostupným riešeniam.
+
+\section{Časové testy}
+V teste budeme rátať čas behu jednotlivých programov od začiatku spracovania vstupného slovníka, až po vygenerovanie predom stanoveného počtu hesiel. Pri jednorázovom generovaní určitého počtu hesiel by naše riešenie mohlo byť trochu pomalšie ako iné bežne používané riešenie. Avšak v prípade, že budeme generovať heslá s rovankými parametrami rozdelené do viacerých osobitných požiadaviek, náš program by mohol byť trochu rýchlejší vďaka tomu, že nebude musieť spracovávať opäť vstupné dáta. 
+
+\paragraph{}
+Vo viacerých spusteniach tohto testu sme menili premenné \emph{maximálna dĺžka hesla}, \emph{počet generovaných hesiel}, \emph{počet opakovaných generovaní hesiel}, \emph{maximálna dĺžka neterminálu v gramatike}. Taktiež budeme každý test spúštať viac krát a vo výsledkoch uvedieme aritmetický priemer týchto hodnôt. Výsledne tabuľky a grafy sa nachádzajú v sekcií výsledky.
+
+\section{Test správnosti}
+Hlavným cieľom našej práce je najsť zabudnuté používateľské heslo v čo najkratšom čase. Toto sa dá dosiahnuť dvoma spôsobmi. Jeden z nich je optimalizácia kódu zodpovedného za overovanie či sme našli správne heslo. Druhý, ktorému sme sa v tejto práci venovali, je optimalizácia poradia generovania hesiel, ktoré chceme vyskúšať. Práve preto nám záleži aby nami sme minimalizovali počet hesiel, ktoré musíme vyskúšať než nájdeme to správne. Avšak toto môže veľmi záležať od prípadu k prípadu, preto budeme náš program porovnávať s ostatnými bežne dostupnými riešeniami a ich spôsobmi generovania hesiel. 
+
+\paragraph{}
+Vrámci testu necháme všetky programy vygenerovať predom stanovené množstvo hesiel zo zadaného slovníka. Tento slovník bude pozostávať z hesiel zoradených podľa počtu použití a bude identický pre všetky testované programy. Následne výsledne zoznamy hesiel porovnáme oproti pôvodnému slovníku. Ako jednu z hlavných metrík pri rozhodovaní o kvalite zoznamu hesiel budeme brať \emph{štandardnú odchýlku} indexov hesiel oproti pôvodnému slovníku. Taktiež budeme sledovať iné miery kvality <<TODO>>.
