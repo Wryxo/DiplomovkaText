@@ -1,8 +1,9 @@
 \chapter{Implementácia}
 
-\section{Tvorba gramatiky}
+\section{Bezkontextová gramatika}
+\subsection{Tvorba gramatiky}
 \paragraph{}
-Pri tvorbe gramatiky sme potrebovali zaistiť aby gramatika spĺňala určité podmienky. Prvou z nich je schopnosť gramatiky vygenerovať všetky reťazce zo vstupnej abecedy kratšie ako používateľom zadaná maximálna dĺžka. Druhou podmienkou je aby každé terminálne slovo, ktoré gramatika generuje malo práve jeden strom odvodenia.
+Pri tvorbe gramatiky sme potrebovali zaistiť aby gramatika spĺňala určité podmienky. Prvou z nich je schopnosť gramatiky vygenerovať všetky reťazce zo vstupnej abecedy kratšie ako používateľom zadaná maximálna dĺžka. Druhou podmienkou je aby každé terminálne slovo, ktoré gramatika generuje malo práve jeden strom odvodenia. Nakoniec by sme chceli aby algoritmus, ktorý bude pomocou tejto gramatiky generovať heslá bol deterministický.
 
 \paragraph{Jednodché neterminály}
 Prvý typ neterminálov, ktoré budeme nazývať jednoduché, obsahuje pravidlá na zterminalnenie generovaného slova. Keďže naša vstupná abeceda obsahuje okolo 70 znakov, medzi ne patria veľke a malé písmena, cifry a niektoré často používané symboly, rozhodli sme sa ich rozdeliť do jednotlivých skupín. Pre každú z týchto skupín sme vytvorili neterminál, ktorý bude reprezentovať sekvenciu pevnej dĺžky zloženú zo znakov danej skupiny. V gramatike tieto neterminály vyjadrujeme pomocou prvého písmena anglického názvu danej skupiny.
@@ -13,6 +14,7 @@ Prvý typ neterminálov, ktoré budeme nazývať jednoduché, obsahuje pravidlá
 	\item S - symbol - symboly
 \end{itemize}
 Každý jednoduchý neterminál sa teda skladá z písmena vyjadrujúceho skupinu znakov, ktoré generuje, a čísla popisujúceho dĺžku sekvencie na pravej strane pravidiel tohto neterminálu. Keďže generovanie všetkých variacií veľkostí k pri n prvkoch môže byť obrovské množstvo rozhodli sme sa zadefinovať maximálnu dĺžku sekvencie generovanej jednoduchým neterminálom.
+
 \paragraph{Zložené neterminály}
 Jednoduché neterminály nám pomáhajú vyjadrovať sekvenciu znakov práve jedného z vyššie vymenovaných typov. Aby sme boli schopný popísať ľubovolný reťazec tvorený znakmi vstupnej abecedy, budeme tieto jednoduché neterminály skladať do skupín, zložených neterminálov. Tieto neterminály vyjadrujú vzdy jeden možný predpis pre terminálne slovo. Napríklad neterminál \emph{U1L3D4} vyjadruje všetky terminálne slová začínajúce na veľké písmeno nasledované tromi malými písmena, ukončené štvoricou cifier.
 \paragraph{}
@@ -20,7 +22,7 @@ Jednoduché neterminály nám pomáhajú vyjadrovať sekvenciu znakov práve jed
 \paragraph{}
 Počiatočný neterminál gramatiky \emph{Z} bude obsahovať pravidlá prepisujúce tento neterminál na niektorý zo zložených alebo jednoduchých neterminálov. Tento spôsob generovania gramatiky spĺňa obe pravidlá, ktoré sme popisovali v úvode tejto kapitoly. 
 
-\section{Počítanie pravdepodobností}
+\subsection{Počítanie pravdepodobností}
 \paragraph{}
 Ako sme spomínali v úvode textu, nami generované pokusy o nájdenie hesla chceme prispôsobit potrebám jednotlivých používateľom, ktorí sa snažia získať svoje stratené heslo. Aby sme vedeli čo najlepsie vyhovieť týmto používateľom, potrebujeme upraviť našu gramatiku. Tu prichádzajú do pozornosti pravdepodobností jednotlivých pravidiel našej gramatiky. Našim cieľom je nastaviť našu gramatiku tak aby generovala heslá podľa pravdepodobnosti použitia daným používateľom. Úspešnosť tohto učenia gramatiky bude drastický záležať od kvality vstupných dát.
 \paragraph{}
@@ -36,6 +38,25 @@ Prvý spôsob ako postupovať bol identický s tým pre jednoduché neterminály
 
 \paragraph{Rekurzívne}
 Ďalší spôsob spočíva v tom, že zo vstupného slovníka vypočítame pravdepodobností len pre jednoduché netermiály. Následne pre zložené neterminály počítame pravdepodobnosti ako súčin pravedpodobností jednoduchých neterminálov, ktoré daný neterminál obsahuje.
+\paragraph{}
+Všetky vyššie spomenuté metódy na počítanie pravdepodobností pravidiel gramatiky sme implementovali. Ich vzájomne porovnanie ako aj porovnanie s inými bežne používanými programami je vidieť v kapitole Výsledky. Bohužial sme zistili, že gramatika vytvorená naším algoritmom zaberala príliš veľa miesta na disku. Rozhodli sme sa skúsiť upraviť našu gramatiku tak aby vyžadovala menej zapamútaných pravidiel, zatiaľ čo by si udržala ostatné svoje vlastnosti.
+
+\subsection{Generovanie hesiel}
+\paragraph{}
+Dôležitým aspektom používania bezkontextových gramatík je práve spôsob generovania hesiel. Našim hlavným cieľom bolo generovanie hesiel pomocou gramatiky od najpravdepodobnejšieho z nich. Tieto heslá generujeme tak, že počiatočný neterminál rozpíšeme na najpravdepodobnejší zložený neterminál. Následne jednoduché neterminály, z ktorých sa tento zložený neterminál skladá, prepíšeme postupne ich najpravdepodonejšími terminálnymi vetnými formami. K tomu sme potrebovali utriediť všetky pravidlá pre jednotlivé neterminály zostupne podľa ich pravdepodobnosti. Toto utriedenie nám umožnilo pamätať si len indexy posledne použitých pravidiel jednotlivých neterminálov, ktoré práve rozpisujeme. Týmto spôsobom dokážeme popísať stromy odvodenia jednotlivých hesiel ako \emph{k}-tice čísel vyjadrujúce poradie použitých pravidiel vrámci ich neterminálov. Kde jedno číslo slúži na určenie vybratého zloženého neterminálu a zvyšné vyjadrujú poradia použitých pravidiel \emph{k-1} jednoduchých neterminálov, z ktorých sa tento zložený neterminál skladá.
+\paragraph{}
+Na začiatku je heslo s najvyššiou pravdepodobnosťou popísané vektorom samých núl. Z tohto bodu rozbehneme algoritmus prehľadávania do šírky s použitím prioritnej fronty. Ako prvé si do fronty pridáme všetky možné vektory indexov vzdialené od aktualného práve o 1, čiže také kde sa niektorý z indexov zvýši o jedna zatiaľ čo ostatné ostanú nezmenené. Do fronty pridávame dvojice vektor a pravdepodobnosť tohto vektoru. Pravdepodobnosť jednotlivých vektorov rátame ako súčin pravdepodobností pravidiel na ktoré ukazujú. Keďže každý čo pridávame sa líši práve v jednom indexe, p[t+1] = p[t] / pi[t] * pi[t+1]. Keď už sme pridali všetky takéto susedné vektory, vybereme z fronty ten s najvyššiou pravdepodobnosťou a na ňom celý proces opäť zopakujeme.
+\paragraph{}
+Týmto spôsobom by sme ale generovali veľké množstvo rovnakých vektorov, ktoré by sme dostali zmenou indexov v inom podarí. Napríklad ak by sme zvýšili najprv index na pozícii 1 a potom 3, dostali by sme to isté ako keby sme zvýšili na pozícii 3 a potom 1. Preto zavedieme ešte špeciálne číslo, ktoré názveme radom vektoru. Rád vektoru bude číslo určujúce pozíciu najvyššieho zmeneného indexu. Zároveň pri generovaní susedných vektorov dovolíme meniť indexy len na pozíciach výšších alebo rovných ako je aktuálny rád vektora. Týmto zariadíme aby sa negenerovali duplikáty, ktoré by sa líšili len v poradí akom boli indexy menené.
+\paragraph{}
+Tento priamočiarý prístup ku generovaniu spĺňa všetky naše požiadavky na generované heslá. Veľkosť fronty sa môže veľmi radikálne zmeniť na základe rozpoloženia pravdepodobností vrámci neterminálov. Preto by toto miesto bolo vhodné na použitie nejakej heuritisky. Bohužiaľ vrámci tejto práce sa nám nepodarilo nájsť vhodné heuristiky, ktoré by zmenšili pamäťovú náročnosť zatiaľ čo by čo najlepšie uchovali poradie hesiel.
+
+\section{Markovov zdroj}
+\paragraph{}
+Po implementácií vyššie uvedeného algoritmu na generovanie hesiel pomocou pravdepodobnostných bezkontextových gramatík a odhalení nedostatkov čo sa týka pamäťovej náročnosti sme sa rozhodli implementovať ešte jednu metódu. Tou je Markovov zdroj. Ako sme písali v predošlej kapitole, jedná sa o náhodný proces, ktorý spĺňa podmienku bezpamäťovosti. Markovove zdroje sa veľmi často používaju práve pri generovaní prirodzeného jazyka. Práve preto boli vhodný kandidát pre generovanie hesiel na základe znalostí získaných zo vstupného slovníka. 
 
 \paragraph{}
-Všetky vyššie spomenuté metódy na počítanie pravdepodobností pravidiel gramatiky sme implementovali. Ich vzájomne porovnanie ako aj porovnanie s inými bežne používanými programami je vidieť v kapitole Výsledky.
+Bohužial táto metóda nespĺňa ani jednu z podmienok, ktoré sme si na začiatku definovali. Ako bolo písane jedná sa o náhodny proces, čiže dve od seba rôzne spustenia môžu viesť k rôznym výsledkom. Druhá podmienka o generovaní duplikátov taktiez nie je splnená, keďže tomuto zdroje nič nebráni k tomu vygenerovať viac krát počas behu to isté slovo a nič by mu v tom nemalo ani brániť, to je celá pointa bezpamäťovosti. A na koniec markovové zdroje nemusia generovať všetký možné reťazce kratšie ako zadaná maximálna dĺžka.
+
+\paragraph{}
+Aj keď prvé dve podmienky nevedia Markovove zdroje splniť už priamo z definície, s tretiou sme sa pokúsili niečo vymyslieť. Ako prvé sme sa pokúšali inicializovať všetky počty výskyt na 1 namiesto 0. Toto avšak spôsobilo, že sa zdroj relatívne ľahko dostal medzi prefixi, ktoré neboli definované, kde všetky znaky majú rovnakú pravdepodobnosť. Dôsledkom tohto bolo zacyklenie sa v týchto neznámych stavoch, čoho výsledkom boli dlhé nezmyselné reťazce znakov. Preto sme sa snažili nájsť spôsob ako nastaviť pravdepodobností nevidených stavov na nenulové, avšak dostatočne malé aby sa v nich samotný algoritmus nezacyklil.

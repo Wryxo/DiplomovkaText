@@ -1,4 +1,10 @@
 \chapter*{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}  
 \paragraph{}
-V dnešnom svete fungujúcom na elektronických dátach, ktoré pre nás majú obrovskú cenu, sa ľudia snažia udržať ich čo najviac v tajnosti. Za týmto účelom vznikli mnohé programy slúžiace na zašifrovanie dát pomocou používateľského hesla. Vzhľadom na rýchly vzrast výpočtovej sily počítačov tieto používateľské heslá sa začali predlžovať a komplikovať. Zatiaľ čo vďaka tomuto trendu sa zvýšili bezpečnosť dát, heslá sa stali na toľko komplikované, že boli ťažko zapamätateľné. Zatiaľ čo spoločnosti poskytujúce služby využívajúce zaheslované dáta dokážu potenciálne vyresetovať používateľovi heslo aby mal možnosť zvoliť si nové, zašifrovaný disk na domácom počítači takúto možnosť nemá. Práve tento problém sa snažíme adresovať v tejto práci.
+V dnešnom svete fungujúcom na elektronických dátach, ktoré pre nás majú obrovskú cenu, sa ľudia snažia udržať ich čo najviac v tajnosti. Za týmto účelom vznikli mnohé programy slúžiace na zašifrovanie dát pomocou používateľského hesla. Vzhľadom na rýchly vzrast výpočtovej sily počítačov sa skrátil čas potrebný na prehľadanie celého priestoru možných hesiel. Preto sa používateľské heslá začali predĺžovať a komplikovať.
+
+\paragraph{}
+Zatiaľ čo vďaka tomuto trendu sa zvýšila bezpečnosť dát, heslá sa stali na toľko komplikované, že boli ťažko zapamätateľné. Zatiaľ čo spoločnosti poskytujúce služby využívajúce zaheslované dáta dokážu vyresetovať používateľovi jeho heslo aby mal možnosť zvoliť si nové, zašifrovaný disk na domácom počítači takúto možnosť nemá. Práve tento problém sa snažíme adresovať v tejto práci. Implementujeme program, ktorý by na základe pomocnej informácie pri vstupe čo najrýchlejšie našiel používateľové stratené heslo.
+
+\paragraph{}
+Takéto hľadanie heslá sa v prípade útokov hrubou silou skladá z dvoch fáz. Prvou fázou je generovanie hesiel, ktoré pri tomto útoku budeme skúšať použiť. Práve na túto fázu sa budeme sústrediť v tejto práci. Budeme hľadať spôsob akým čo najefektívnejšie generovať tieto heslá. Druhou fázou je samotné overenie správnosti zadaného hesla. Túto časť nebudeme priamo implementovať, avšak výstup nášho programu by mal byť použiteľný s ľubovolným voľne dostupným programom na skúšanie hesiel ako napríklad \emph{hashCat}.

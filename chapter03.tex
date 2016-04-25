@@ -1,11 +1,10 @@
 \chapter{Učenie}
-Ako sme spomínali vyššie v texte, náš program bude generovať heslá na základe nejakých znalostí. Tento proces učenia sa, sa dá implementovať pomocou viacerých známych metodík medzi, ktoré patria napríklad neurónové siete alebo pravdepodobnostné gramatiky.
-
-\section{Neuronové siete}
-\paragraph{}
-
+Ako sme spomínali vyššie v texte, náš program bude generovať heslá na základe nejakých znalostí. Tento proces učenia sa, sa dá implementovať pomocou viacerých známych metodík, medzi ktoré patria napríklad Markovové zdroje alebo pravdepodobnostné gramatiky.
 
 \section{Pravdepodobnostné bezkontextové gramatiky}
 \paragraph{}
-Bezkontextové gramatiky používajú pravidlá pri ktorých sa neterminál môže zmeniť na ľubovoľnú vetnú formu bez ohľadu na kontext v ktorom sa nachádza. Pravdepodobnostné gramatiky vzniknú keď každému pravidlu priradíme číslo v rozmedzí 0 a 1. Toto číslo vyjadruje pravdepodobnosť použitia daného pravidla pre jeho neterminál, súčet pravdepodobností jedného neterminálu by mal byť 1. Následne pravdepodobnosť terminálnej vetnej formy je rovná súčinu pravdepodobností pravidiel použitých v jej odvodení. V gramatikách je možné a častokrát až bežné aby jedna terminálna vetná forma mala viacero stromov odvodenia, poradí použitia pravidiel. My sme sa tejto vlastnosti snažili vyhnúť, pretože by sme zbytočne generovali jedno heslo viac krát.
+Bezkontextové gramatiky používajú pravidlá pri ktorých sa neterminál môže zmeniť na ľubovoľnú vetnú formu bez ohľadu na kontext v ktorom sa nachádza. Pravdepodobnostné gramatiky vzniknú keď každému pravidlu priradíme číslo v rozmedzí 0 a 1. Toto číslo vyjadruje pravdepodobnosť použitia daného pravidla pre jeho neterminál, súčet pravdepodobností jedného neterminálu by mal byť rovný 1. Následne pravdepodobnosť terminálnej vetnej formy je rovná súčinu pravdepodobností pravidiel použitých v jej odvodení. V gramatikách je možné a častokrát až bežné aby jedna terminálna vetná forma mala viacero stromov odvodenia, poradí použitia pravidiel. My sme sa tejto vlastnosti snažili vyhnúť, pretože by sme zbytočne generovali jedno heslo viac krát.
 
+\section{Markovové zdroje}
+\paragraph{}
+Náhodný proces prechadzajúci cez priestor stavov sa nazýva Markovov zdroj ak spĺňa Markovovu vlastnosť. Táto vlastnosť je popísaná ako takzvaná bezpamäťovosť a hovorí o tom, že distribúcia pravdepodobností následujúceho stavu závisí len od terajšieho stavu a nezáleži na sekvencií událostí, ktoré mu predchádzali. Práve táto vlastnosť nás doviedla k skúmaniu tohto riešenia. Hlavným problémom použiteľností bezkontextových gramatík bolo množstvo pamäte, ktoré vyžadovali, jak pri vytváraní gramatiky tak aj pri generovaní hesiel. Markovové zdroje ako jedinú informáciu zo vstupného slovníka si zachovávajú pravdepodobnosti výskytu znakov po predom definovanom prefixe. V prípade, že algoritmus narazí na neznámy prefix, predpokladá že všetky znaky majú rovnakú pravdepodobnosť. Medzera a znak nového riadku sa tiež počítajú medzi tieto znaky, a vďaka ním sa naučí algoritmus vytvárať reťazce podobnej dĺžky ako tie čo dostal na vstupe.

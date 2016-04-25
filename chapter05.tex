@@ -1,10 +1,10 @@
 \chapter{Testy}
 
 \paragraph{}
-Cieľom tejto kapitoly je podrobne popisať testy, ktoré slúžia k vyhodnoteniu efektivity a správanosti nášho algoritmu voči iným bežne dostupným riešeniam.
+Veľmi dôležitou časťou práce je overenie efektívnosti jednotlivých riešení, ktoré sme implementovali. Práve to je hlavné zameranie tejto kapitoly, bližšie tu popíšeme ako sme nastavili testy a čo sme vďaka ním zistili.
 
 \section{Časové testy}
-V teste budeme rátať čas behu jednotlivých programov od začiatku spracovania vstupného slovníka, až po vygenerovanie predom stanoveného počtu hesiel. Pri jednorázovom generovaní určitého počtu hesiel by naše riešenie mohlo byť trochu pomalšie ako iné bežne používané riešenie. Avšak v prípade, že budeme generovať heslá s rovankými parametrami rozdelené do viacerých osobitných požiadaviek, náš program by mohol byť trochu rýchlejší vďaka tomu, že nebude musieť spracovávať opäť vstupné dáta. 
+V teste budeme rátať čas behu jednotlivých programov od začiatku spracovania vstupného slovníka, až po vygenerovanie predom stanoveného počtu hesiel. Pri jednorázovom generovaní určitého počtu hesiel by naše riešenie pomocou bezkontextových gramatík mohlo byť trochu pomalšie ako riešenie pomocou Makrovoveho zdroja. Avšak v prípade, že budeme generovať heslá s rovankými parametrami rozdelené do viacerých osobitných požiadaviek, náš program by mohol byť trochu rýchlejší vďaka tomu, že nebude musieť spracovávať opäť vstupné dáta. 
 
 \paragraph{}
 Vo viacerých spusteniach tohto testu sme menili premenné \emph{maximálna dĺžka hesla}, \emph{počet generovaných hesiel}, \emph{počet opakovaných generovaní hesiel}, \emph{maximálna dĺžka neterminálu v gramatike}. Taktiež budeme každý test spúštať viac krát a vo výsledkoch uvedieme aritmetický priemer týchto hodnôt. Výsledne tabuľky a grafy sa nachádzajú v sekcií výsledky.
