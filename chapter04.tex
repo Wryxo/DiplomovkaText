@@ -293,7 +293,7 @@ b & 2 \\
 \caption{Ukážka počítania pravdepodobností - gramatika}
 \label{gramatikaPP}
 \begin{tabular}{l|lll}
-Pravidlo & \(p_základna\) & \(p_podreťazce\) & \(p_rekurzívne\) \\ \hline
+Pravidlo & \(p_{základna}\) & \(p_{podreťazce}\) & \(p_{rekurzívne}\) \\ \hline
 \(L1 \to a\) & 14,28 & 14,28 & 14,28 \\
 \(L1 \to b\) & 5,35 & 5,35 & 5,35 \\
 \(L1 \to c\) & 2 & 2 & 2 \\
@@ -310,7 +310,7 @@ Pravidlo & \(p_základna\) & \(p_podreťazce\) & \(p_rekurzívne\) \\ \hline
 \end{tabular}
 \quad
 \begin{tabular}{l|lll}
-Pravidlo & \(p_základna\) & \(p_podreťazce\) & \(p_rekurzívne\) \\ \hline
+Pravidlo & \(p_{základna}\) & \(p_{podreťazce}\) & \(p_{rekurzívne}\) \\ \hline
 \(Z \to L1\) & 2 & 3 & 2 \\
 \(Z \to D1\) & 0 & 2 & 0 \\
 \(Z \to L2\) & 0 & 2 & 0 \\
@@ -332,7 +332,15 @@ Vplyv výberu použitia uvedených spôsobov na kvalitu gramatiky a rýchlosť j
 
 \subsection{Generovanie hesiel}
 \paragraph{}
-Dôležitým aspektom používania bezkontextových gramatík je práve spôsob generovania hesiel. Našim hlavným cieľom bolo generovanie hesiel pomocou gramatiky od najpravdepodobnejšieho z nich. Tieto heslá generujeme tak, že počiatočný neterminál rozpíšeme na najpravdepodobnejší zložený neterminál. Následne jednoduché neterminály, z ktorých sa tento zložený neterminál skladá, prepíšeme postupne ich najpravdepodobnejšími terminálnymi vetnými formami. K tomu sme potrebovali utriediť všetky pravidlá pre jednotlivé neterminály zostupne podľa ich pravdepodobnosti. Toto utriedenie nám umožnilo pamätať si len indexy posledne použitých pravidiel jednotlivých neterminálov, ktoré práve rozpisujeme. Týmto spôsobom dokážeme popísať stromy odvodenia jednotlivých hesiel ako \(k\)-tice čísel vyjadrujúce poradie použitých pravidiel vrámci ich neterminálov. Kde jedno číslo slúži na určenie vybratého zloženého neterminálu a zvyšné vyjadrujú poradia použitých pravidiel \(k-1\) jednoduchých neterminálov, z ktorých sa tento zložený neterminál skladá.
+\label{fig:stromOdvodenia}
+\Tree [.Z [.L2 \textit{ab} ]
+           [.L1 \textit{c} ]]
+\Tree [.Z [.D2 \textit{11} ]
+           [.D1 \textit{3} ]]
+
+\paragraph{}
+\ref{fig:stromOdvodenia} Dôležitým aspektom používania bezkontextových gramatík je práve spôsob generovania hesiel. Našim hlavným cieľom bolo generovanie hesiel pomocou gramatiky od najpravdepodobnejšieho z nich. Tieto heslá generujeme tak, že počiatočný neterminál rozpíšeme na najpravdepodobnejší zložený neterminál. Následne jednoduché neterminály, z ktorých sa tento zložený neterminál skladá, prepíšeme postupne ich najpravdepodobnejšími terminálnymi vetnými formami. K tomu sme potrebovali utriediť všetky pravidlá pre jednotlivé neterminály zostupne podľa ich pravdepodobnosti. Toto utriedenie nám umožnilo pamätať si len indexy posledne použitých pravidiel jednotlivých neterminálov, ktoré práve rozpisujeme. Týmto spôsobom dokážeme popísať stromy odvodenia jednotlivých hesiel ako \(k\)-tice čísel vyjadrujúce poradie použitých pravidiel vrámci ich neterminálov. Kde jedno číslo slúži na určenie vybratého zloženého neterminálu a zvyšné vyjadrujú poradia použitých pravidiel \(k-1\) jednoduchých neterminálov, z ktorých sa tento zložený neterminál skladá.
+
 \paragraph{}
 Na začiatku je heslo s najvyššou pravdepodobnosťou popísané vektorom samých núl. Z tohto bodu rozbehneme algoritmus prehľadávania do šírky s použitím prioritnej fronty. Ako prvé si do fronty pridáme všetky možné vektory indexov vzdialené od aktuálneho práve o 1, čiže také, kde sa niektorý z indexov zvýši o jedna zatiaľ čo ostatné ostanú nezmenené. Do fronty pridávame dvojice vektor a pravdepodobnosť tohto vektoru. Pravdepodobnosť jednotlivých vektorov rátame ako súčin pravdepodobností pravidiel na ktoré ukazujú. Keďže každý čo pridávame sa líši práve v jednom indexe, tak platí \(p[t+1] = p[t] / p_i[t] * p_i[t+1]\). Keď už sme pridali všetky takéto susedné vektory, vyberieme z fronty ten s najvyššou pravdepodobnosťou a na ňom celý tento proces opäť zopakujeme.
 \paragraph{}
