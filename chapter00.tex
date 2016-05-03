@@ -5,17 +5,17 @@
 V dnešnom svete fungujúcom na elektronických dátach, ktoré pre nás majú obrovskú cenu, sa ľudia snažia ochrániť ich dôvernosť. Tieto dáta sa dajú jednoducho ochrániť, ak k ním bude mať fyzický prístup len majiteľ. Toto avšak nie je najpoužiteľnejšie riešenie, keďže takmer každý počítač je pripojený do nejakej siete. Iná možnosť je mať dáta uložené vo forme, ktorá bude dávať zmysel len oprávneným osobám, aj keď fyzický prístup k ním môžu mať aj iný ľudia. Na tento účel primárne slúži šifrovanie. 
 
 \paragraph{}
-Bezpečnosť šifrovania veľmi záleží na utajený kľúča. Preto je dôležité aby nebol ľahko uhádnuteľný. Keďže počítače priniesli so sebou obrovskú výpočtovú silu, sú schopné robiť až niekoľko desiatok tisíc pokusov za sekundu snažiac sa uhádnuť tento kľúč \cite{gpu25}. Keďže rýchlosť tohto hľadania kľúča záleží hlavne od veľkosti prehľadávaného priestoru kľúčov, v praxi sa bežne používajú aspoň 256 bitov dlhé kľúče. Toto je ekvivalent 32 znakového používateľského hesla zloženého z ľubovolných znakov ASCII tabuľky.
+Bezpečnosť šifrovania veľmi záleží na utajení kľúča. Preto je dôležité, aby nebol ľahko uhádnuteľný. Keďže počítače priniesli so sebou obrovskú výpočtovú silu, sú schopné robiť až niekoľko desiatok tisíc pokusov za sekundu snažiac sa uhádnuť tento kľúč \cite{gpu25}. Keďže rýchlosť tohto hľadania kľúča záleží hlavne od veľkosti prehľadávaného priestoru kľúčov, v praxi sa bežne používajú aspoň 256 bitov dlhé kľúče. Toto je ekvivalent 32 znakového používateľského hesla zloženého z ľubovolných znakov ASCII tabuľky.
 
 \paragraph{}
-Takéto hľadanie kľúča preberaním všetkých možností sa nazýva útok hrubou silou. Jeho podstatou je postupné generovanie možných kľúčov a následne overenie ich správnosti. V~našej práci sa zameriame na útok pri ktorom má útočník fyzický prístup k súboru s hešmi. Postup tohto útoku je následovný:
+Takéto hľadanie kľúča preberaním všetkých možností sa nazýva útok hrubou silou. Jeho podstatou je postupné generovanie možných kľúčov a následne overenie ich správnosti. V~našej práci sa zameriame na útok pri ktorom má útočník fyzický prístup k súboru s odtlačkami. Postup tohto útoku je nasledovný:
 \begin{itemize}
 	\item Útočník vygeneruje kandidáta na overenie
-	\item Ak existuje, tak pripojí náhodný reťazec spojený s týmto heslom ku kandidátovi. Tieto reťazce zabezpečujú ochranu pred útokom pomocou predpočítaných hešov
+	\item Ak existuje, tak pripojí náhodný reťazec spojený s týmto heslom ku kandidátovi. Tieto reťazce zabezpečujú ochranu pred útokom pomocou predpočítaných odtlačkov
 	\item Zahešuje kandidáta pomocou zvoleného hešovacieho algoritmu
-	\item Porovná novovzniknutý heš s~hešmi nachádzajúcimi sa súbore z ktorého sa snaží nájsť heslá
+	\item Porovná novovzniknutý odtlačok s~odtlačkami nachádzajúcimi sa v súbore z ktorého sa snaží nájsť heslá
 \end{itemize}
-Nakoľko je tento algoritmus na overovanie kandidátov dobre paralelizovateľný, keďže overenie jedného kandidáta nezávisí na žiadnom inom overení, jednou z optimalizácií tohto procesu bude počítanie týchto hešov pomocou grafických kariet. Nakoľko existujú práce \cite{5665047} podrobne sa venujúce sa týmto optimalizáciám, nebudeme vrámci tejto práce implementovať program na overenie správnosti kandidátov. 
+Nakoľko je tento algoritmus na overovanie kandidátov dobre paralelizovateľný, keďže overenie jedného kandidáta nezávisí na žiadnom inom overení, jednou z optimalizácií tohto procesu bude počítanie týchto odtlačkov pomocou grafických kariet. Nakoľko existujú práce \cite{5665047} podrobne sa venujúce sa týmto optimalizáciam, nebudeme vrámci tejto práce implementovať program na overenie správnosti kandidátov. 
 
 \paragraph{}
 V tejto práci sa budeme zaoberať skúmaním a implementáciou algoritmov na generovanie týchto kandidátov. Výstupom našej práce bude program, ktorý bude generovať zoznam hesiel, ktoré sa dajú následne použiť ako kandidáti v~niektorom z~voľne dostupných programov na skúšanie takýchto hesiel ako napríklad \emph{hashCat}, \emph{John The Ripper} alebo \emph{PasswordsPro}.
@@ -24,4 +24,4 @@ V tejto práci sa budeme zaoberať skúmaním a implementáciou algoritmov na ge
 Tieto programy podporujú viaceré spôsoby útokov hrubou silou na veľké množstvo známych a často používaných hešovacích funkcií. Tieto typy útokov zahŕňajú použitie predom vytvorených slovníkov, spájanie slov z rôznych slovníkov ako aj postupné generovanie všetkých možných reťazcov. V našej práci sa snažíme vyvinúť a implementovať ďalší spôsob generovania kandidátov použitím pravdepodobnostných bezkontextových gramatík.
 
 \paragraph{}
-Efektívnosť nami navrhnutého riešenia budeme porovnávať s algoritmom používajúcim Markovovské zdroje, ktoré sú používane aj vyššie spomenutými programami pri postupnom generovaní kandidátov. Tento algoritmus sme si vybrali, keďže jeho základný princíp priraďovania pravdepodobnosti jednotlivým znakom na základe predošlého stavu je najbližší k tomu, ktorý používame v našom algoritmus využívajúcom bezkontextové gramatiky.
+Efektívnosť nami navrhnutého riešenia budeme porovnávať s algoritmom používajúcim Markovovské zdroje, ktoré sú používané aj vyššie spomenutými programami pri postupnom generovaní kandidátov. Tento algoritmus sme si vybrali, keďže jeho základný princíp priraďovania pravdepodobnosti jednotlivým znakom na základe predošlého stavu je najbližší k tomu, ktorý používame v našom algoritme využívajúcom bezkontextové gramatiky.
