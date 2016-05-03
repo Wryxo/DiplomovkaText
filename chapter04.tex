@@ -268,18 +268,23 @@ for i in range(1, len(word)):
 \centering
 \caption{Ukážka počítania pravdepodobností - slovník}
 \label{slovnikPP}
-\begin{tabular}{l}
-Slovník \\ \hline
-abc \\
-1bc \\
-12 \\
-1b1 \\
-b \\
-113 \\
-b2c \\
-bca \\
-a \\
-11 \\
+\begin{tabular}{ll}
+Slovo & Počet výskytov \\ \hline
+abc & 20 \\ 
+123 & 14 \\ 
+113 & 13 \\ 
+bbc & 12 \\ 
+ab & 8 \\ 
+ca & 8 \\ 
+c2c & 6 \\ 
+bb3 & 5 \\ 
+3a3 & 5 \\ 
+ca2 & 5 \\ 
+a & 2 \\ 
+b & 2 \\ 
+2 & 2 \\ 
+31 & 1 \\ 
+122 & 1
 \end{tabular}
 \end{table}
 
@@ -289,8 +294,8 @@ a \\
 \label{gramatikaPP}
 \begin{tabular}{l|lll}
 Pravidlo & \(p_základna\) & \(p_podreťazce\) & \(p_rekurzívne\) \\ \hline
-\(L1 \to a\) & 2 & 2 & 2 \\
-\(L1 \to b\) & 3 & 3 & 3 \\
+\(L1 \to a\) & 14,28 & 14,28 & 14,28 \\
+\(L1 \to b\) & 5,35 & 5,35 & 5,35 \\
 \(L1 \to c\) & 2 & 2 & 2 \\
 \(L2 \to ab\) & 1 & 1 & 1 \\
 \(L2 \to bc\) & 2 & 2 & 2 \\
