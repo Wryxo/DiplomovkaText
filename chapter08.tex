@@ -1,0 +1,10 @@
+\chapter{Záver}
+
+\paragraph{}
+V tejto práci sme sa zaoberali útokmi hrubou silou na program TrueCrypt. Podrobne sme si naštudovali fungovanie tohto programu a usúdili, že najlepším miestom útoku, na disku zašifrovaný týmto programom, bude používateľské heslo pomocou ktorého sa generujú šifrovacie kľúče. Na základe tohto poznatku sme si naštudovali možností útokov hrubou silou, ktoré by sme mohli pri riešení nášho problému použiť.
+
+\paragraph{}
+Pri implementácií nášho riešenia používajúceho bezkontextové gramatiky sme používali znalostí o používateľských heslách k nastaveniu nášho algoritmu tak aby optimalizoval poradie generovaných hesiel podľa pravdepodobností ich správnosti. Tento algoritmus sme následne porovnávali so zaužívanou metódou Markovovských zdrojov. Keďže náš algoritmus spĺňal konkrétnejšie podmienky pri generovaní hesiel ako sú determinizmus, generovanie celého priestoru hesiel a vyhnutie sa duplikátom navrhli sme zmeny v modeli Markovovských zdrojov. Tieto zmeny sme taktiež implementovali a výsledný algoritmus sme taktiež porovnali s našim riešením.
+
+\paragraph{}
+Nami navrhnutá metóda využívajúca bezkontextové gramatiky dopadla v testoch veľmi podobne ako Markovovské zdroje, čo hodnotíme ako pozitívny výsledok tejto práce. Nedostatky tejto metódy a jej aplikácie na program TrueCrypt sme rozobrali v kapitole Diskusia.

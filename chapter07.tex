@@ -1,0 +1,14 @@
+\chapter{Diskusia}
+
+\section{Možnosti zlepšenia nášho riešenia}
+\subsection{Izolovanie kódu na skúšanie kandidátov}
+\paragraph{}
+Bohužiaľ sa nám kvôli nedostatku času nepodarilo izolovať kód programu TrueCrypt, ktorý je zodpovedný za overenie správnosti hesla zadaného používateľom. Nájdenie tohto kódu by mohlo pomôcť pri implementácií rýchleho algoritmu na overovanie nami generovaných kandidátov. Tento nedostatok sa dá avšak nahradiť použitím niektorého z voľne dostupných programov určených na útoky hrubou silou, ktorému ako vstupný slovník dodáme slovník vygenerovaný nami implementovaným programom.
+
+\subsection{Veľkosť potrebnej pamäte}
+\paragraph{}
+Najväčším nedostatkom samotného algoritmu využívajúceho bezkontextové gramatiky je množstvo pamäte potrebné na jeho beh. Tento nedostatok spôsobuje možnosť použitia tohto algoritmu len v prostredí s obrovským množstvom RAM. Odstránenie tohto nedostatok vyžaduje vývoj algoritmu, ktorý dokáže generovať terminálne vetné formy gramatiky s použitím malého množstvá pamäte.
+
+\subsection{Kompletne generujúci Markovovský zdroj}
+\paragraph{}
+Podarilo sa nám implementovať Markovovský zdroj, ktorý v konečnom čase vygeneruje všetky možné heslá zo vstupnej abecedy. Pri riešení tohto problému sme zadefinovali konštanty \(\delta\) a \(\varepsilon\), ktoré slúžia na zadefinovanie prechodov medzi známymi a neznámymi stavmi. Možný vylepšením by bolo upravovanie týchto konštánt podľa počtu hesiel, ktoré sme už vygenerovali, aby sme zvýšili šancu vygenerovania zbytku existujúcich hesiel. Toto avšak zahŕňa výskum, ktorý by sa dal rozobrať v samostatnej práci.

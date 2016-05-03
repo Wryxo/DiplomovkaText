@@ -2,10 +2,26 @@
 \addcontentsline{toc}{chapter}{Úvod}  
 \markboth{}{Úvod}
 \paragraph{}
-V dnešnom svete fungujúcom na elektronických dátach, ktoré pre nás majú obrovskú cenu, sa ľudia snažia udržať ich čo najviac v tajnosti. Tieto dáta sa dajú jednoducho ochrániť, ak k ním bude mať prístup len majiteľ. Toto avšak nie je najpoužiteľnejšie riešenie keďže takmer každý počítač je pripojený do nejakej siete. Iná možnosť je mať uložené tieto dáta vo forme, ktorá bude dávať zmysel len povereným osobám, aj keď prístup k ním môžu mať aj iný ľudia. Na toto primárne slúži šifrovanie pomocou kľúča. 
+V dnešnom svete fungujúcom na elektronických dátach, ktoré pre nás majú obrovskú cenu, sa ľudia snažia ochrániť ich dôvernosť. Tieto dáta sa dajú jednoducho ochrániť, ak k ním bude mať fyzický prístup len majiteľ. Toto avšak nie je najpoužiteľnejšie riešenie, keďže takmer každý počítač je pripojený do nejakej siete. Iná možnosť je mať dáta uložené vo forme, ktorá bude dávať zmysel len oprávneným osobám, aj keď fyzický prístup k ním môžu mať aj iný ľudia. Na tento účel primárne slúži šifrovanie. 
 
 \paragraph{}
-Bezpečnosť tohto šifrovania záleží vysoko na utajený tohto kľúča. Preto je dôležité aby nebol ľahko odhadnuteľný. Keďže počítače priniesli so sebou obrovskú výpočtovú silu, sú schopné robiť až niekoľko desiatok tisíc pokusov za sekundu snažiac sa uhádnuť tento kľúč \cite{gpu25}. Keďže rýchlosť tohto hľadania kľúča záleží hlavne od veľkosti prehľadávaného priestoru kľúčov, v praxi sa bežne používajú aspoň 256 bitov dlhé kľúče. Toto je ekvivalent 32 znakového používateľského hesla zloženého zo ľubovolných znakov ASCII tabuľky.
+Bezpečnosť šifrovania veľmi záleží na utajený kľúča. Preto je dôležité aby nebol ľahko uhádnuteľný. Keďže počítače priniesli so sebou obrovskú výpočtovú silu, sú schopné robiť až niekoľko desiatok tisíc pokusov za sekundu snažiac sa uhádnuť tento kľúč \cite{gpu25}. Keďže rýchlosť tohto hľadania kľúča záleží hlavne od veľkosti prehľadávaného priestoru kľúčov, v praxi sa bežne používajú aspoň 256 bitov dlhé kľúče. Toto je ekvivalent 32 znakového používateľského hesla zloženého z ľubovolných znakov ASCII tabuľky.
 
 \paragraph{}
-Takéto hľadanie kľúča sa nazýva útok hrubou silou. Jeho podstatou je postupné generovanie možných kľúčov a následne overenie ich správnosti. V tejto práci sa budeme venovať skúmaniu a implementácií algoritmov na generovanie týchto hesiel. Program na následne overenie správnosti týchto hesiel nebudeme implementovať, keďže jeho implementácia by mala obsahovať množstvo optimalizácií, ktoré si mimo rozsah tejto práce. Výstup našej práce bude program, ktorý bude generovať zoznam hesiel, ktoré sa dajú následne použiť v niektorom z voľne dostupných programov na skúšanie takýchto hesiel ako napríklad \emph{hashCat}.
+Takéto hľadanie kľúča preberaním všetkých možností sa nazýva útok hrubou silou. Jeho podstatou je postupné generovanie možných kľúčov a následne overenie ich správnosti. V~našej práci sa zameriame na útok pri ktorom má útočník fyzický prístup k súboru s hešmi. Postup tohto útoku je následovný:
+\begin{itemize}
+	\item Útočník vygeneruje kandidáta na overenie
+	\item Ak existuje, tak pripojí náhodný reťazec spojený s týmto heslom ku kandidátovi. Tieto reťazce zabezpečujú ochranu pred útokom pomocou predpočítaných hešov
+	\item Zahešuje kandidáta pomocou zvoleného hešovacieho algoritmu
+	\item Porovná novovzniknutý heš s~hešmi nachádzajúcimi sa súbore z ktorého sa snaží nájsť heslá
+\end{itemize}
+Nakoľko je tento algoritmus na overovanie kandidátov dobre paralelizovateľný, keďže overenie jedného kandidáta nezávisí na žiadnom inom overení, jednou z optimalizácií tohto procesu bude počítanie týchto hešov pomocou grafických kariet. Nakoľko existujú práce \cite{5665047} podrobne sa venujúce sa týmto optimalizáciám, nebudeme vrámci tejto práce implementovať program na overenie správnosti kandidátov. 
+
+\paragraph{}
+V tejto práci sa budeme zaoberať skúmaním a implementáciou algoritmov na generovanie týchto kandidátov. Výstupom našej práce bude program, ktorý bude generovať zoznam hesiel, ktoré sa dajú následne použiť ako kandidáti v~niektorom z~voľne dostupných programov na skúšanie takýchto hesiel ako napríklad \emph{hashCat}, \emph{John The Ripper} alebo \emph{PasswordsPro}.
+
+\paragraph{}
+Tieto programy podporujú viaceré spôsoby útokov hrubou silou na veľké množstvo známych a často používaných hešovacích funkcií. Tieto typy útokov zahŕňajú použitie predom vytvorených slovníkov, spájanie slov z rôznych slovníkov ako aj postupné generovanie všetkých možných reťazcov. V našej práci sa snažíme vyvinúť a implementovať ďalší spôsob generovania kandidátov použitím pravdepodobnostných bezkontextových gramatík.
+
+\paragraph{}
+Efektívnosť nami navrhnutého riešenia budeme porovnávať s algoritmom používajúcim Markovovské zdroje, ktoré sú používane aj vyššie spomenutými programami pri postupnom generovaní kandidátov. Tento algoritmus sme si vybrali, keďže jeho základný princíp priraďovania pravdepodobnosti jednotlivým znakom na základe predošlého stavu je najbližší k tomu, ktorý používame v našom algoritmus využívajúcom bezkontextové gramatiky.

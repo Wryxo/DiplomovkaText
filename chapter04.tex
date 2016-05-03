@@ -1,102 +1,336 @@
 \chapter{Implementácia}
 
-\section{Bezkontextová gramatika}
+\section{Pravdepodobnostná bezkontextová gramatika}
+\paragraph{}
+Pravdepodobnostná bezkontextová gramatika je bezkontextová gramatika, ktorej pravidlá majú priradenú pravdepodobnosť. Pravdepodobnostná bezkontextová gramatika \(G\) je pätica \(G = (M, T, R, S, P)\), kde:
+\begin{itemize}
+	\item \(M = { N^i : i = 1,...,n }\) je množina neterminálov
+	\item \(T = { w^k : k = 1,...,V }\) je množina terminálov
+	\item \(R = { N^i \to \zeta^j : \zeta^j \epsilon (M \cup T)^* }\) je množina pravidiel
+	\item \(S = N^1\) je počiatočný neterminál
+	\item \(P\) je množina pravdepodobností pravidiel, kde platí \( \forall i \displaystyle\sum_{i} P(N^i \to \zeta^j) = 1\)
+\end{itemize}
+
 \subsection{Tvorba gramatiky}
 \paragraph{}
-Pri tvorbe gramatiky sme potrebovali zaistiť aby gramatika spĺňala určité podmienky. Prvou z nich je schopnosť gramatiky vygenerovať všetky reťazce zo vstupnej abecedy kratšie ako používateľom zadaná maximálna dĺžka. Druhou podmienkou je aby každé terminálne slovo, ktoré gramatika generuje malo práve jeden strom odvodenia. Nakoniec by sme chceli aby algoritmus, ktorý bude pomocou tejto gramatiky generovať heslá bol deterministický.
+Pri tvorbe gramatiky sme si dali za cieľ zaistiť aby gramatika spĺňala určité podmienky:
+\begin{itemize}
+	\item Generovať všetky reťazce zo vstupnej abecedy kratšie ako používateľom zadaná maximálna dĺžka
+	\item Vygenerovať každý reťazec práve raz
+\end{itemize}
+
+\paragraph{}
+V nami vytvorenej gramatiky bude kategorizovať slová podľa ich zloženie z jednotlivých typov znakov. Pre každý takýto typ znakov vygenerujeme všetky možné reťazce zložené zo znakov tohto typu. Následne vytvoríme všetky možné predpisy zložené z kombinácií týchto typov. Uvažujme, že typ 1 obsahuje \(t_1\) znakov a typ 2 obsahuje \(t_2\) znakov a budeme vytvárať reťazce dĺžky 2, kde každý znak patrí do iného typu. Všetkých takýchto reťazcov je \(t_1 * t_2 * 2\). Naša gramatika si bude pamätať len \(t_1 + t_2 + 2\) položiek, z ktorých dokáže spájaním vygenerovať všetkých \(t_1 * t_2 * 2\).
 
 \paragraph{Jednoduché neterminály}
-Prvý typ neterminálov, ktoré budeme nazývať jednoduché, obsahuje pravidlá na zterminalnenie generovaného slova. Keďže naša vstupná abeceda obsahuje okolo 70 znakov, medzi ne patria veľké a malé písmena, cifry a niektoré často používané symboly, rozhodli sme sa ich rozdeliť do jednotlivých skupín. Pre každú z týchto skupín sme vytvorili neterminál, ktorý bude reprezentovať sekvenciu pevnej dĺžky zloženú zo znakov danej skupiny. V gramatike tieto neterminály vyjadrujeme pomocou prvého písmena anglického názvu danej skupiny.
+Prvý typ neterminálov, ktoré budeme nazývať jednoduché, obsahujú pravidlá, ktoré majú na pravej strane pravidla iba terminálne symboly. Keďže naša vstupná abeceda obsahuje okolo 70 znakov, medzi ktoré patria veľké a malé písmena, cifry a niektoré často používané symboly, rozhodli sme sa ich rozdeliť do jednotlivých skupín. Pre každú z týchto skupín sme vytvorili neterminál, ktorý bude reprezentovať sekvenciu pevnej dĺžky zloženú zo znakov danej skupiny. V gramatike tieto neterminály vyjadrujeme pomocou prvého písmena anglického názvu danej skupiny.
 \begin{itemize}
 	\item U - veľké písmena
 	\item L - malé písmena
 	\item D - cifry
 	\item S - symboly
 \end{itemize}
-Každý jednoduchý neterminál sa teda skladá z písmena vyjadrujúceho skupinu znakov, ktoré generuje, a čísla popisujúceho dĺžku sekvencie na pravej strane pravidiel tohto neterminálu. Ako napríklad jednoduchý neterminál \(D_1\) vyjadruje pravidla \(D_1 \to 1 | 2 ... 9 | 0 \). Keďže všetkých variácií veľkostí k pri n prvkoch je \( n^k\) rozhodli sme sa zadefinovať maximálnu veľkosť jednoduchého neterminálu, vyjadrujúcu maximálné povolené \(k\).
-
-môže byť obrovské množstvo rozhodli sme sa zadefinovať maximálnu dĺžku sekvencie generovanej jednoduchým neterminálom.
+Každý jednoduchý neterminál sa teda skladá z písmena vyjadrujúceho skupinu znakov, ktoré generuje, a čísla popisujúceho dĺžku sekvencie na pravej strane pravidiel tohto neterminálu. Ako napríklad jednoduchý neterminál \(D_1\) vyjadruje pravidla \(D_1 \to 1 | 2 | ... | 9 | 0 \). Keďže všetkých reťazcov terminálnych znakov dĺžky \emph{k} nad abecedou veľkosti \emph{n} je \( n^k\) rozhodli sme sa zadefinovať maximálnu veľkosť jednoduchého neterminálu, vyjadrujúcu maximálné povolené \(k\). Na základe testov zo sekcií \ref{sec:time} a \ref{sec:pass} sa ako vhodná hodnota ukázalo \(k = 5\). Avšak v prípade generovania malého počtu hesiel sa kvôli optimalizácií času oplatí použiť hodnotu \(k = 4\).
 
 \paragraph{Zložené neterminály}
-Jednoduché neterminály nám pomáhajú vyjadrovať sekvenciu znakov práve jedného z vyššie vymenovaných typov. Aby sme boli schopný popísať ľubovolný reťazec tvorený znakmi vstupnej abecedy, budeme tieto jednoduché neterminály skladať do skupín, zložených neterminálov. Tieto neterminály vyjadrujú vždy jeden možný predpis pre terminálne slovo. Napríklad neterminál \(U_1L_3D_4\) vyjadruje všetky terminálne slová začínajúce na veľké písmeno nasledované tromi malými písmena, ukončené štvoricou cifier.
+Jednoduché neterminály nám pomáhajú vyjadrovať sekvenciu znakov práve jedného z vyššie vymenovaných typov. Aby sme boli schopný popísať ľubovolný reťazec tvorený znakmi vstupnej abecedy, budeme tieto jednoduché neterminály skladať do skupín, tieto skupiný budeme nazývať zložené neterminály. Tieto neterminály vyjadrujú vždy jeden možný predpis pre terminálne slovo. Napríklad zložený neterminál \(U_1L_3D_4\) vyjadruje všetky terminálne slová začínajúce na veľké písmeno nasledované tromi malými písmena, ukončené štvoricou cifier.
+
 \paragraph{}
-Ďalej taktiež nedovoľujeme aby sa vyskytovali 2 jednoduché neterminály rovnakého typu za sebou. V prípade, že potrebujeme popísať sekvenciu terminálnych znakov jedného typu dlhšiu ako povolené maximum (popísane vyššie), rozdelíme túto sekvenciu do viacerých jednoduchých neterminálov pažravým algoritmom, čiže každý z týchto neterminálov zoberie maximálny možný počet znakov sekvencie. Ak zoberieme heslo pozostávajúce z 9 cifier ako napríklad jedno z najpoužívanejších \emph{123456789} a máme najvyššiu povolenú dĺžku jednoduchého neterminálu nastavenú na 4, toto heslo bude v našej gramatike zapísané ako \(D_4D_4D_1\). Tento spôsob nám zaručí, že nevzniknú dva rôzne zložené neterminály vyjadrujúce ten istý predpis terminálneho slova.
+Kvôli dodržaniu jednoznačnosti generovania nedovoľujeme aby sa vyskytovali 2 jednoduché neterminály rovnakého typu za sebou. V prípade, že potrebujeme popísať sekvenciu terminálnych znakov jedného typu dlhšiu ako povolené maximum (popísane vyššie), rozdelíme túto sekvenciu do viacerých jednoduchých neterminálov pažravým algoritmom, čiže každý z týchto neterminálov zoberie maximálny možný počet znakov sekvencie. Ak zoberieme heslo pozostávajúce z 9 cifier ako napríklad jedno z najpoužívanejších \emph{123456789} a máme najvyššiu povolenú dĺžku jednoduchého neterminálu nastavenú na 4, toto heslo bude v našej gramatike zapísané ako \(D_4D_4D_1\). Tento spôsob nám zaručí, že nevzniknú dva rôzne zložené neterminály vyjadrujúce ten istý predpis terminálneho slova.
+
 \paragraph{}
-Počiatočný neterminál gramatiky \(Z\) bude obsahovať pravidlá prepisujúce tento neterminál na niektorý zo zložených alebo jednoduchých neterminálov. Tento spôsob generovania gramatiky spĺňa obe pravidlá, ktoré sme popisovali v úvode tejto kapitoly. 
+Počiatočný neterminál gramatiky \(Z\) bude obsahovať pravidlá prepisujúce tento neterminál na zložené neterminály vyjadrujúce všetky možné predpisy slov kratších ako zadaná maximálna dĺžka.
 
 \subsection{Počítanie pravdepodobností}
 \paragraph{}
-Ako sme spomínali v úvode textu, nami generované pokusy o nájdenie hesla chceme prispôsobiť potrebám jednotlivých používateľom, ktorí sa snažia získať svoje stratené heslo. Aby sme vedeli čo najlepšie vyhovieť týmto používateľom, potrebujeme upraviť našu gramatiku. Tu prichádzajú do pozornosti pravdepodobností jednotlivých pravidiel našej gramatiky. Našim cieľom je nastaviť našu gramatiku tak aby generovala heslá podľa pravdepodobnosti použitia daným používateľom. Úspešnosť tohto učenia gramatiky bude drastický záležať od kvality vstupných dát.
+Aby sme vedeli čo najlepšie vyhovieť potrebám používateľa, potrebujeme im prispôsobiť našu gramatiku. Tu začnú zohrávať rolu pravdepodobnosti jednotlivých pravidiel našej gramatiky. Našim cieľom je nastaviť našu gramatiku tak, aby generovala heslá podľa pravdepodobnosti použitia daným používateľom. Úspešnosť tohto učenia gramatiky bude záležať od kvality vstupných dát.
 \paragraph{}
-Vzhľadom na to, že v dnešnom svete používatelia používajú rôzne služby, ktoré každá odporúča mať jedinečné heslo, používatelia používajú niekoľko hesiel naraz. Tieto heslá by si radi všetky pamätali a preto si často vytvoria pre seba charakteristický spôsob tvorby a zapamätania si týchto hesiel. V ideálnom prípade by sme chceli aby naše vstupné dáta pozostávali z čo najväčšieho počtu hesiel vytvorených pomocou tohto charakteristického spôsobu, keďže každé upresnenie informácií o hľadanom hesle nám zvýši rýchlosť nájdenia tohto hesla.
+Vzhľadom na to, že v dnešnom svete používatelia používajú rôzne služby, ktoré každá odporúča mať jedinečné heslo, používatelia používajú niekoľko hesiel naraz. Tieto heslá by si radi všetky pamätali a preto, ako sme už v úvode spomínali, si často vytvoria pre seba charakteristický spôsob tvorby a zapamätania si týchto hesiel. V ideálnom prípade by sme chceli aby naše vstupné dáta pozostávali z čo najväčšieho počtu hesiel vytvorených pomocou tohto charakteristického spôsobu, keďže každé upresnenie informácií o hľadanom hesle nám zvýši rýchlosť nájdenia tohto hesla.
 \paragraph{}
-Keďže cieľom našej práce je nájsť heslo so 100\% pravdepodobnosťou, čo v najhoršom prípade znamená vygenerovať všetky možné reťazce kratšie ako zadaná maximálna dĺžka hesla, tak základnú gramatiku s pravidlami vieme vygenerovať dopredu a pravidla tejto gramatiky sa budú meniť len pri zmene maximálnej dĺžky hesla. Pri používanie nášho algoritmu s rôznymi slovníkmi nevyžaduje vyrábanie novej gramatiky až do momentu kedy sa rozhodneme generovať heslá s inou maximálnou dĺžkou. Pravdepodobností prepisovacích pravidiel generujúcich terminálne sekvencie budeme rátať ako percento výskytov danej terminálnej sekvencie spomedzi všetkých sekvencií spadajúcich pod tento neterminál. Práve kvôli tomuto spôsobu sme pridali v implementácií možnosť napísať do vstupného slovníku počty výskytov jednotlivých hesiel, aby mal používateľ možnosť zdôrazniť dôležitosť hesla. Vstupné slovníky, ktoré neskôr používame v našich testoch majú formát, kde na každom riadku je heslo s počtom jeho výskytov oddelené medzerou. 
+Keďže cieľom našej práce je nájsť heslo so 100\% pravdepodobnosťou, čo v najhoršom prípade znamená vygenerovať všetky možné reťazce kratšie ako zadaná maximálna dĺžka hesla, tak základnú gramatiku s pravidlami vieme vygenerovať dopredu a pravidlá tejto gramatiky sa budú meniť len pri zmene maximálnej dĺžky hesla. Preto používanie nášho algoritmu s rôznymi slovníkmi nevyžaduje vyrábanie novej gramatiky až do momentu kedy sa rozhodneme generovať heslá s inou maximálnou dĺžkou. Pravdepodobnosti prepisovacích pravidiel generujúcich terminálne sekvencie budeme rátať ako percento výskytov danej terminálnej sekvencie spomedzi všetkých sekvencií spadajúcich pod tento neterminál. Práve kvôli tomuto spôsobu sme pridali v implementácií možnosť napísať do vstupného slovníku počty výskytov jednotlivých hesiel, aby mal používateľ možnosť zdôrazniť dôležitosť hesla. Vstupné slovníky, ktoré neskôr používame v našich testoch majú formát, kde na každom riadku je heslo s počtom jeho výskytov oddelené medzerou. 
 
-\paragraph{}
 \begin{listing}
 \begin{minted}[linenos,
-			   tabsize=2,
-               numbersep=3pt,
-               frame=single,
-               framesep=2mm]{python}
+			   tabsize=2]{python}
+# ideme po pismenach slova zo slovnika
 for i in range(1, len(word)):
-	if (word[i] in lower) and (currentNet != \'L\'):
+	# ak sa zmenil typ znaku na male pismeno
+	if (word[i] in lower) and (currentNet != 'L'):
+		# k zlozenemu neterminalu pridame jednoduchy posledneho 
+		# videneho typu a velkosti
 		rule += currentNet + str(i-startI)
+		# pripocitame pocet vyskytov retazca daneho posledneho
+		# jednoducheho neterminalu
 		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		# pripocitame pocet vyskytov daneho jednoducheho neterminalu
 		ruleCount[currentNet + str(i-startI)] += occ
+		# dalsi typ zacina na i-tej pozicii
 		startI = i
-		currentNet = \'L\'
+		# je to retazec malych pismen
+		currentNet = 'L'
+		# budujeme od zaciatku
 		currentSubstring=''
-	elif (word[i] in upper) and (currentNet != \'U\'):
+	# ak sa zmenil typ znaku na velke pismeno
+	elif (word[i] in upper) and (currentNet != 'U'):
+		# k zlozenemu neterminalu pridame jednoduchy posledneho 
+		# videneho typu a velkosti
 		rule += currentNet + str(i-startI)
+		# pripocitame pocet vyskytov retazca daneho posledneho
+		# jednoducheho neterminalu
 		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		# pripocitame pocet vyskytov daneho jednoducheho neterminalu
 		ruleCount[currentNet + str(i-startI)] += occ
+		# dalsi typ zacina na i-tej pozicii
 		startI = i
-		currentNet = \'U\'
+		# je to retazec velkych pismen
+		currentNet = 'U'
+		# budujeme od zaciatku
 		currentSubstring=''
 \end{minted}
 \caption{Úprava pravidiel na základe vstupného slova}
 \label{lst:grammar1}
 \end{listing}
+\begin{listing}
+\begin{minted}[linenos,
+			   tabsize=2]{python}
+	# ak sa zmenil typ znaku na cislicu
+	elif (word[i] in digit) and (current != 'D'):
+		# k zlozenemu neterminalu pridame jednoduchy posledneho
+		# videneho typu a velkosti
+		rule += currentNet + str(i-startI)
+		# pripocitame pocet vyskytov retazca daneho posledneho
+		# jednoducheho neterminalu
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		# pripocitame pocet vyskytov daneho jednoducheho neterminalu
+		ruleCount[currentNet + str(i-startI)] += occ
+		# dalsi typ zacina na i-tej pozicii
+		startI = i
+		# je to retazec cislic
+		currentNet = 'D'
+		# budujeme od zaciatku
+		currentSubstring=''
+	# ak sa zmenil typ znaku na symbol
+	elif (word[i] in special) and (current != 'S'):
+		# k zlozenemu neterminalu pridame jednoduchy posledneho
+		# videneho typu a velkosti
+		rule += currentNet + str(i-startI)
+		# pripocitame pocet vyskytov retazca daneho posledneho
+		# jednoducheho neterminalu
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		# pripocitame pocet vyskytov daneho jednoducheho neterminalu
+		ruleCount[currentNet + str(i-startI)] += occ
+		# dalsi typ zacina na i-tej pozicii
+		startI = i
+		# je to retazec symbolov
+		currentNet = 'S'
+		# budujeme od zaciatku
+		currentSubstring=''
+	# presiahli sme velkost jednoducheho neterminalu
+	elif len(currentSubstring) >= maxNetSize:
+		# k zlozenemu neterminalu pridame jednoduchy posledneho
+		# videneho typu a velkosti
+		rule += currentNet + str(i-startI)
+		# pripocitame pocet vyskytov retazca daneho posledneho
+		# jednoducheho neterminalu
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		# pripocitame pocet vyskytov jednoducheho daneho neterminalu
+		ruleCount[currentNet + str(i-startI)] += occ
+		# dalsi typ zacina na i-tej pozicii
+		startI = i
+		# budujeme od zaciatku
+		currentSubstring=''
+	currentSubstring += word[i]
+...
+\end{minted}
+\caption{Úprava pravidiel na základe vstupného slova - Pokračovanie}
+\label{lst:grammar1-2}
+\end{listing}
 
 \paragraph{}
 Pri počítaní pravdepodobností zložených neterminálov máme viacero možností ako postupovať.
 \paragraph{Priamo zo vstupného slovníka}
-Prvý spôsob ako postupovať bol identický s tým pre jednoduché neterminály. Pre každé pravidlo gramatiky prepisujúce počiatočný neterminál na zvolený zložený neterminál vypočítame jeho pravdepodobnosť ako pomer počtu výskytov tohto neterminálu a výskytov všetkých neterminálov dohromady. Tento spôsob môže mať ešte 2 varianty.
+Prvý spôsob ako postupovať je identický s tým pre jednoduché neterminály. Pre každé pravidlo gramatiky prepisujúce počiatočný neterminál na zvolený zložený neterminál vypočítame jeho pravdepodobnosť ako pomer počtu výskytov tohto neterminálu a výskytov všetkých neterminálov dohromady. Existuje taktiež viacero spôsobov ako počítať výskyty zložených neterminálov.
 \begin{itemize}
 	\item Do výskytov počítame len výskyty hesiel ktoré sú presne reprezentované daným neterminálom
 	\item Do výskytov započítame aj výskyty kedy je zvolený neterminál podreťazcom iného neterminálu
 \end{itemize}
-V oboch týchto variantoch počítame počty výskytov jednoduchých neterminálov. Rozdiel medzi týmito variantami ukážeme na príklade. Majme na vstupe heslo, ktoré je reprezentované zloženým neterminálom \(U_2L_3D_2\), použitím prvého variantu tento zložený neterminál vygeneruje jedno zvýšenie počtu výskytov a to pre tento konkrétny neterminál. Ukážka kódu implementujúceho prvý variant \ref{lst:grammar1}. Druhý variant by na tomto neterminály vyvolal 2 navýšenia počtu výskytov a to osobitne pre zložené neterminály \(U_2L_3\) a \(U_2L_3D_2\). Aby sme upravili náš program na druhý variant pridali sme riadky kódu znázornené v \ref{lst:grammar2} pre každý krok kedy sa mení typ pozorovaného jednoduchého neterminálu.
+V oboch týchto variantoch počítame počty výskytov jednoduchých neterminálov. Rozdiel medzi týmito variantami ukážeme na príklade. Majme na vstupe heslo, ktoré je reprezentované zloženým neterminálom \(U_2L_3D_2\), použitím prvého variantu tento zložený neterminál vygeneruje jedno zvýšenie počtu výskytov a to pre tento konkrétny neterminál. Ukážka kódu implementujúceho prvý variant \ref{lst:grammar1}. Druhý variant by na tomto neterminály vyvolal 2 navýšenia počtu výskytov a to osobitne pre zložené neterminály \(U_2L_3\) a \(U_2L_3D_2\). Aby sme upravili náš program na druhý variant pridali sme pre každú zmenu typu neterminálu pripočítanie výskytov k doteraz vytvorenému zloženému neterminálu, ukážka takto upraveného kódu je v \ref{lst:grammar2}.
 
-\paragraph{}
 \begin{listing}
 \begin{minted}[linenos,
-			   tabsize=2,
-               numbersep=3pt,
-               frame=single,
-               framesep=2mm]{python}
-if not rule in rulez['Z']:
-	rulez['Z'][rule] = 1
-rulez['Z'][rule] += occurences
-ruleCount['Z'] += occurences
+			   tabsize=2]{python}
+for i in range(1, len(word)):
+	if (word[i] in lower) and (currentNet != 'L'):
+		rule += currentNet + str(i-startI)
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		ruleCount[currentNet + str(i-startI)] += occ
+		# este sme takyto zlozeny neterminal nevideli
+		if not rule in rulez['Z']:
+			rulez['Z'][rule] = 1
+		# pripocitame pocet vyskytov tohto zlozeneho netermialu
+		rulez['Z'][rule] += occ
+		# pripocitame pocet vyskytov nejakeho neterminalu
+		ruleCount['Z'] += occ
+		startI = i
+		currentNet = 'L'
+		currentSubstring=''
+	elif (word[i] in upper) and (currentNet != 'U'):
+		rule += currentNet + str(i-startI)
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		ruleCount[currentNet + str(i-startI)] += occ
+		# este sme takyto zlozeny neterminal nevideli
+		if not rule in rulez['Z']:
+			rulez['Z'][rule] = 1
+		# pripocitame pocet vyskytov tohto zlozeneho netermialu
+		rulez['Z'][rule] += occ
+		# pripocitame pocet vyskytov nejakeho neterminalu
+		ruleCount['Z'] += occ
+		startI = i
+		currentNet = 'U'
+		currentSubstring=''
 \end{minted}
 \caption{Pripočítanie výskytov k podmnožinám zložených neterminálov}
 \label{lst:grammar2}
 \end{listing}
 
+\begin{listing}
+\begin{minted}[linenos,
+			   tabsize=2]{python}
+	elif (word[i] in digit) and (current != 'D'):
+		rule += currentNet + str(i-startI)
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		ruleCount[currentNet + str(i-startI)] += occ
+		# este sme takyto zlozeny neterminal nevideli
+		if not rule in rulez['Z']:
+			rulez['Z'][rule] = 1
+		# pripocitame pocet vyskytov tohto zlozeneho netermialu
+		rulez['Z'][rule] += occ
+		# pripocitame pocet vyskytov nejakeho neterminalu
+		ruleCount['Z'] += occ
+		# dalsi typ zacina na i-tej pozicii
+		startI = i
+		# je to retazec cislic
+		currentNet = 'D'
+		# budujeme od zaciatku
+		currentSubstring=''
+	# ak sa zmenil typ znaku na symbol
+	elif (word[i] in special) and (current != 'S'):
+		# k zlozenemu neterminalu pridame jednoduchy posledneho
+		# videneho typu a velkosti
+		rule += currentNet + str(i-startI)
+		# pripocitame pocet vyskytov retazca daneho posledneho
+		# jednoducheho neterminalu
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		# pripocitame pocet vyskytov daneho jednoducheho neterminalu
+		ruleCount[currentNet + str(i-startI)] += occ
+		# este sme takyto zlozeny neterminal nevideli
+		if not rule in rulez['Z']:
+			rulez['Z'][rule] = 1
+		# pripocitame pocet vyskytov tohto zlozeneho netermialu
+		rulez['Z'][rule] += occ
+		# pripocitame pocet vyskytov nejakeho neterminalu
+		ruleCount['Z'] += occ
+		startI = i
+		currentNet = 'S'
+		currentSubstring=''
+\end{minted}
+\caption{Pripočítanie výskytov k podmnožinám zložených neterminálov - Pokračovanie}
+\label{lst:grammar2-2}
+\end{listing}
+\begin{listing}
+\begin{minted}[linenos,
+			   tabsize=2]{python}
+	elif len(currentSubstring) >= maxNetSize:
+		rule += currentNet + str(i-startI)
+		rulez[currentNet + str(i-startI)][str(currentSubstring)] += occ
+		ruleCount[currentNet + str(i-startI)] += occ
+		# ak uz mame zlozeny neterminal
+		if len(rule) > 2:
+			# este sme taky nevideli
+			if not rule in rulez['Z']:
+				rulez['Z'][rule] = 1
+			# pripocitame pocet vyskytov tohto zlozeneho netermialu
+			rulez['Z'][rule] += occ
+			# pripocitame pocet vyskytov nejakeho neterminalu
+			ruleCount['Z'] += occ
+		startI = i
+		currentSubstring=''
+	currentSubstring += word[i]
+\end{minted}
+\caption{Pripočítanie výskytov k podmnožinám zložených neterminálov - Pokračovanie}
+\label{lst:grammar2-3}
+\end{listing}
+
 \paragraph{Rekurzívne}
 Ďalší spôsob spočíva v tom, že zo vstupného slovníka vypočítame pravdepodobností len pre jednoduché netermiály. Následne pre zložené neterminály počítame pravdepodobnosti ako súčin pravdepodobností jednoduchých neterminálov, ktoré daný neterminál obsahuje.
+
+\begin{table}[]
+\centering
+\caption{Ukážka počítania pravdepodobností - slovník}
+\label{slovnikPP}
+\begin{tabular}{l}
+Slovník \\ \hline
+abc \\
+1bc \\
+12 \\
+1b1 \\
+b \\
+113 \\
+b2c \\
+bca \\
+a \\
+11 \\
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\caption{Ukážka počítania pravdepodobností - gramatika}
+\label{gramatikaPP}
+\begin{tabular}{l|lll}
+Pravidlo & \(p_základna\) & \(p_podreťazce\) & \(p_rekurzívne\) \\ \hline
+\(L1 \to a\) & 2 & 2 & 2 \\
+\(L1 \to b\) & 3 & 3 & 3 \\
+\(L1 \to c\) & 2 & 2 & 2 \\
+\(L2 \to ab\) & 1 & 1 & 1 \\
+\(L2 \to bc\) & 2 & 2 & 2 \\
+\(L2 \to ca\) & 1 & 1 & 1 \\
+\(L2 \to aa|ac|ba|bb|cb|cc\) & 0 & 0 & 0 \\
+\(D1 \to 1\) & 3 & 3 & 3 \\
+\(D1 \to 2\) & 1 & 1 & 1 \\
+\(D1 \to 3\) & 1 & 1 & 1 \\
+\(D2 \to 11\) & 2 & 2 & 2 \\
+\(D2 \to 12\) & 1 & 1 & 1 \\
+\(D2 \to 13|21|22|23|31|32|33\) & 0 & 0 & 0 
+\end{tabular}
+\quad
+\begin{tabular}{l|lll}
+Pravidlo & \(p_základna\) & \(p_podreťazce\) & \(p_rekurzívne\) \\ \hline
+\(Z \to L1\) & 2 & 3 & 2 \\
+\(Z \to D1\) & 0 & 2 & 0 \\
+\(Z \to L2\) & 0 & 2 & 0 \\
+\(Z \to D2\) & 2 & 3 & 2 \\
+\(Z \to D1L1\) & 0 & 1 & 5 \\
+\(Z \to L1D1\) & 0 & 1 & 5 \\
+\(Z \to D1L2\) & 1 & 1 & 0 \\
+\(Z \to L2L1\) & 2 & 2 & 2 \\
+\(Z \to D2D1\) & 1 & 1 & ? \\
+\(Z \to L1D1L1\) & 1 & 1 & ? \\
+\(Z \to D1L1D1\) & 1 & 1 & ? \\
+\(Z \to L1D2|L2D1|D2L1\) & 0 & 0 & ? \\
+\end{tabular}
+\end{table}
+
 \paragraph{}
-Všetky vyššie spomenuté metódy na počítanie pravdepodobností pravidiel gramatiky sme implementovali. Ich vzájomne porovnanie ako aj porovnanie s inými bežne používanými programami je vidieť v kapitole Výsledky. Bohužiaľ sme zistili, že gramatika vytvorená naším algoritmom zaberala príliš veľa miesta na disku.
+Vplyv výberu niektoré z vyššie uvedených spôsobov na kvalitu gramatiky a rýchlosť jej generovania potrebne skúmali v sekciách \label{sec:time} a \label{sec:pass}. Na základe týchto testov \[TODO\]
 
 \subsection{Generovanie hesiel}
 \paragraph{}
 Dôležitým aspektom používania bezkontextových gramatík je práve spôsob generovania hesiel. Našim hlavným cieľom bolo generovanie hesiel pomocou gramatiky od najpravdepodobnejšieho z nich. Tieto heslá generujeme tak, že počiatočný neterminál rozpíšeme na najpravdepodobnejší zložený neterminál. Následne jednoduché neterminály, z ktorých sa tento zložený neterminál skladá, prepíšeme postupne ich najpravdepodobnejšími terminálnymi vetnými formami. K tomu sme potrebovali utriediť všetky pravidlá pre jednotlivé neterminály zostupne podľa ich pravdepodobnosti. Toto utriedenie nám umožnilo pamätať si len indexy posledne použitých pravidiel jednotlivých neterminálov, ktoré práve rozpisujeme. Týmto spôsobom dokážeme popísať stromy odvodenia jednotlivých hesiel ako \(k\)-tice čísel vyjadrujúce poradie použitých pravidiel vrámci ich neterminálov. Kde jedno číslo slúži na určenie vybratého zloženého neterminálu a zvyšné vyjadrujú poradia použitých pravidiel \(k-1\) jednoduchých neterminálov, z ktorých sa tento zložený neterminál skladá.
 \paragraph{}
-Na začiatku je heslo s najvyššou pravdepodobnosťou popísané vektorom samých núl. Z tohto bodu rozbehneme algoritmus prehľadávania do šírky s použitím prioritnej fronty. Ako prvé si do fronty pridáme všetky možné vektory indexov vzdialené od aktuálneho práve o 1, čiže také kde sa niektorý z indexov zvýši o jedna zatiaľ čo ostatné ostanú nezmenené. Do fronty pridávame dvojice vektor a pravdepodobnosť tohto vektoru. Pravdepodobnosť jednotlivých vektorov rátame ako súčin pravdepodobností pravidiel na ktoré ukazujú. Keďže každý čo pridávame sa líši práve v jednom indexe, \(p[t+1] = p[t] / pi[t] * pi[t+1]\). Keď už sme pridali všetky takéto susedné vektory, vyberieme z fronty ten s najvyššou pravdepodobnosťou a na ňom celý tento proces opäť zopakujeme.
+Na začiatku je heslo s najvyššou pravdepodobnosťou popísané vektorom samých núl. Z tohto bodu rozbehneme algoritmus prehľadávania do šírky s použitím prioritnej fronty. Ako prvé si do fronty pridáme všetky možné vektory indexov vzdialené od aktuálneho práve o 1, čiže také kde sa niektorý z indexov zvýši o jedna zatiaľ čo ostatné ostanú nezmenené. Do fronty pridávame dvojice vektor a pravdepodobnosť tohto vektoru. Pravdepodobnosť jednotlivých vektorov rátame ako súčin pravdepodobností pravidiel na ktoré ukazujú. Keďže každý čo pridávame sa líši práve v jednom indexe, tak platí \(p[t+1] = p[t] / p_i[t] * p_i[t+1]\). Keď už sme pridali všetky takéto susedné vektory, vyberieme z fronty ten s najvyššou pravdepodobnosťou a na ňom celý tento proces opäť zopakujeme.
 \paragraph{}
-Týmto spôsobom by sme ale generovali veľké množstvo rovnakých vektorov, ktoré by sme dostali zmenou indexov v inom podarí. Napríklad ak by sme zvýšili najprv index na pozícii 1 a potom 3, dostali by sme to isté ako keby sme zvýšili na pozícii 3 a potom 1. Preto zavedieme ešte špeciálne číslo, ktoré nazveme radom vektoru. Rád vektoru bude číslo určujúce pozíciu najvyššieho zmeneného indexu. Zároveň pri generovaní susedných vektorov dovolíme meniť indexy len na pozíciach vyšších alebo rovných ako je aktuálny rád vektora. Týmto budeme generovať terminálne slová zľava doprava a vďaka tomu nebudeme generovať duplikáty, ktoré by sa od seba líšili len v poradí v akom sme rozpísali neterminály na terminály.
+Týmto spôsobom by sme ale generovali veľké množstvo rovnakých vektorov, ktoré by sme dostali zmenou indexov v inom podarí. Napríklad ak by sme zvýšili najprv index na pozícii 1 a potom 3, dostali by sme to isté, ako keby sme zvýšili na pozícii 3 a potom 1. Preto zavedieme ešte špeciálne číslo, ktoré nazveme rádom vektoru. Rád vektoru bude číslo určujúce pozíciu najvyššieho zmeneného indexu. Zároveň pri generovaní susedných vektorov dovolíme meniť indexy len na pozíciach vyšších alebo rovných ako je aktuálny rád vektora. Týmto budeme repisovať neterminály od najľavejšieho a vďaka tomu nebudeme generovať duplikáty, ktoré by sa od seba líšili len v poradí v akom sme rozpísali neterminály na terminály.
 
 \begin{table}[]
 \centering
@@ -128,43 +362,76 @@ p & rád & vektor & slovo \\ \hline
 \end{table}
 
 \paragraph{}
-Vo vyššie uvedených tabuľkách \ref{postupAlgoritmu} sme demonštrujeme 2 kroky nášho algoritmu na generovanie hesiel. V tomto príklade sa sústredíme na generovanie rôznych terminálnych slov zo zloženého neterminálu \(U_1L_3D_2\). V ľavej tabuľke môžme vidieť zadefinované prepisovacie pravidla pre tento neterminál aj s pravdepodobnosťami, ktoré majú priradené. V pravej tabuľke simulujeme obsah našej prioritnej fronty, kde dvojitou vodorovnou čiarou sú oddelené stavy tejto fronty v rôznych krokoch. V počiatočnom stave máme vo fronte prvý prvok ukazujúci na najpravdepodobnejšie heslo generované z definovaných pravidiel. Algoritmus tento prvok vyberie z fronty a následne tam vloží prvky označujúce heslá vzdialené práve na 1 zmenu použitého pravidla. Tieto novo pridané prvky sú automatický zoradené podľa pravdepodobností vďaka tomu, že na pozadí je naša fronta reprezentovaná haldou. 
+Vo tabuľke \ref{postupAlgoritmu} demonštrujeme dva kroky nášho algoritmu na generovanie hesiel. V tomto príklade sa sústredíme na generovanie rôznych terminálnych slov zo zloženého neterminálu \(U_1L_3D_2\). V ľavej časti tabuľky môžme vidieť zadefinované prepisovacie pravidlá pre tento neterminál aj s pravdepodobnosťami, ktoré majú priradené. V pravej tabuľke simulujeme obsah našej prioritnej fronty, kde dvojitou vodorovnou čiarou sú oddelené stavy tejto fronty v rôznych krokoch. V počiatočnom stave máme vo fronte prvý prvok ukazujúci na najpravdepodobnejšie heslo generované z definovaných pravidiel. Algoritmus tento prvok vyberie z fronty a následne tam vloží prvky označujúce heslá vzdialené práve na 1 zmenu použitého pravidla. Tieto novo pridané prvky sú automatický zoradené podľa pravdepodobností vďaka tomu, že na pozadí je naša fronta reprezentovaná haldou. 
 
 \paragraph{}
 V druhom kroku algoritmu vyberie prvok z najvyššou pravdepodobnosťou. Opäť do fronty pridáme prvky vyjadrujúce heslá vzdialené na 1 zmenu použitého pravidlá. Tu si treba všimnúť, že nepridali sme prvok hovoriaci o vektore [1, 1, 0], keďže rád práve vytiahnutého vektora je 1, čiže môžme meniť len indexy 1 a 2, ktoré sú väčšie rovné ako rád vektora. Týmto spôsobom algoritmus pokračuje až dokým nevygeneruje požadovaný počet hesiel alebo nevyprázdni fronta. Fronta sa môže vyprázdniť len ak prejdeme cez všetky možné heslá, keďže jediný moment kedy nepribudne žiaden prvok do fronty je ak rád vektora bude rovný jeho dĺžke a v poslednom jednoduchom neterminály sme použili už všetky jeho pravidlá.
 
 \paragraph{}
-Tento priamočiary prístup ku generovaniu spĺňa všetky naše požiadavky na generované heslá. Veľkosť fronty sa môže veľmi radikálne zmeniť na základe rozpoloženia pravdepodobností vrámci neterminálov. Preto by toto miesto bolo vhodné na použitie nejakej heuristiky. Bohužiaľ vrámci tejto práce sa nám nepodarilo nájsť vhodné heuristiky, ktoré by zmenšili pamäťovú náročnosť zatiaľ čo by čo najlepšie uchovali poradie hesiel.
+Tento priamočiary prístup ku generovaniu spĺňa všetky naše požiadavky na generované heslá. Veľkosť fronty sa môže veľmi radikálne zmeniť na základe rozpoloženia pravdepodobností vrámci neterminálov. Preto by toto miesto bolo vhodné na použitie nejakej heuristiky. Bohužiaľ vrámci tejto práce sa nám nepodarilo nájsť heuristiky, ktoré by zmenšili pamäťovú náročnosť a čo najlepšie uchovali poradie hesiel.
 \paragraph{}
-V \ref{lst:generujSusedov} môžme vidieť kus kódu zodpovedný za napĺňanie prioritnej fronty s ďalšími kandidátmi na najbližšie vygenerované heslo. Premenná \(task\) je usporiadaná dvojica, kde prvý člen tejto dvojice vyjadruje rád vektora, ktorý je uložený ako druhá časť tejto dvojice. Algoritmus prejde od člena určeného radom vektora až po koniec vektora a pre každý prvok posunie index ukazujúci na aktuálne použitý prvok. Taktiež vypočíta pravdepodobnosť hesla reprezentovaného novým stavom vektora. Túto pravdepodobnosť spolu s usporiadanou dvojicou obsahujúcou zmenený rád vektora a samotný vektor vloží do prioritnej fronty.
+V zdrojovom kóde \ref{lst:generujSusedov} môžme vidieť časť kódu zodpovednú za napĺňanie prioritnej fronty ďalšími kandidátmi na najbližšie vygenerované heslo. Premenná \(task\) je usporiadaná dvojica (rád, vektor). Algoritmus prejde od člena určeného rádom vektora až po koniec vektora (riadok 1) a pre každý prvok posunie index ukazujúci na aktuálne použitý prvok (riadok 4). Taktiež vypočíta pravdepodobnosť hesla reprezentovaného novým stavom vektora (riadok 3 a 7). Túto pravdepodobnosť spolu s usporiadanou dvojicou obsahujúcou zmenený rád vektora a samotný vektor vloží do prioritnej fronty (riadok 8 a 9).
 
-\paragraph{}
 \begin{listing}
 \begin{minted}[linenos,
-			   tabsize=2,
-               numbersep=3pt,
-               frame=single,
-               framesep=2mm]{python}
+			   tabsize=2]{python}
 for x in range(task[0],len(task[1])):
-tmp = copy.deepcopy(task[1])
-newpriority = priority / rulez[net[(x-1)*2:x*2]][tmp[x]][1]
-tmp[x] += 1
-if tmp[x] >= len(rulez[net[(x-1)*2:x*2]]):
-	continue
-newpriority = newpriority * rulez[net[(x-1)*2:x*2]][tmp[x]][1]
-newtask = (x, tmp)
-add_task(newtask, newpriority)
+	tmp = copy.deepcopy(task[1])
+	newpriority = priority / rulez[net[(x-1)*2:x*2]][tmp[x]][1]
+	tmp[x] += 1
+	if tmp[x] >= len(rulez[net[(x-1)*2:x*2]]):
+		continue
+	newpriority = newpriority * rulez[net[(x-1)*2:x*2]][tmp[x]][1]
+	newtask = (x, tmp)
+	add_task(newtask, newpriority)
 \end{minted}
 \caption{Generovanie všetkých susedných vektorov}
 \label{lst:generujSusedov}
 \end{listing}
 
-\section{Markovský zdroj}
 \paragraph{}
-Po implementácií vyššie uvedeného algoritmu na generovanie hesiel pomocou pravdepodobnostných bezkontextových gramatík a odhalení nedostatkov čo sa týka pamäťovej náročnosti sme sa rozhodli implementovať ešte jednu metódu. Tou je Markovský zdroj. Ako sme písali v predošlej kapitole, jedná sa o náhodný proces, ktorý spĺňa podmienku bezpamäťovosti. Markovské zdroje sa veľmi často používajú práve pri generovaní prirodzeného jazyka. Práve preto boli vhodný kandidát pre generovanie hesiel na základe znalostí získaných zo vstupného slovníka. 
+Veľkým nedostatkom použitia bezkontextových gramatík je vo veľkosti pamäte, ktorú potrebuje. Samotný zápis gramatiky na disku v tvare JSON mal pri gramatike generujúcej 12 znakové heslá okolo 1 gigabajtu. Avšak táto veľkosť není v dnešnej dobe až taká problematická, keďže existujú kvalitné kompresné algoritmy.
 
 \paragraph{}
-Bohužiaľ táto metóda nespĺňa ani jednu z podmienok, ktoré sme si na začiatku definovali. Ako bolo písane jedná sa o náhodný proces, čiže dve od seba rôzne spustenia môžu viesť k rôznym výsledkom. Druhá podmienka o generovaní duplikátov taktiež nie je splnená, keďže tomuto zdroje nič nebráni k tomu vygenerovať viac krát počas behu to isté slovo a nič by mu v tom nemalo ani brániť, vzhľadom na bezpamäťovosť. A na koniec Markovské zdroje nemusia generovať všetky možné reťazce kratšie ako zadaná maximálna dĺžka.
+Väčší problém nastáva s pamäťou použitou pri samotnom generovaní hesiel z gramatiky. Prioritná fronta, ktorú používame častokrát dosahuje obrovské veľkosti presahujúce desiatky gigabajtov. Tento problém by sa dal riešiť zmenou algoritmu použitého pri generovaní gramatiky. Ideálne za taký čo si potrebuje pamätať len gramatiku samotnú a konštantne veľa informácie k tomu. Toto sa nám bohužiaľ nepodarilo v tejto práci dosiahnuť.
 
 \paragraph{}
-Aj keď prvé dve podmienky nevedia Markovské zdroje splniť už priamo z definície, s treťou sme sa pokúsili niečo vymyslieť. Ako prvé sme sa pokúšali inicializovať všetky počty výskyt na 1 namiesto 0. Toto avšak spôsobilo, že sa zdroj relatívne ľahko dostal medzi prefixy, ktoré neboli definované, kde všetky znaky majú rovnakú pravdepodobnosť. Dôsledkom tohto bolo cyklenie sa v týchto neznámych stavoch, čoho výsledkom boli dlhé nezmyselné reťazce znakov. Preto sme sa snažili nájsť spôsob ako nastaviť pravdepodobností nevidených stavov na nenulové, avšak dostatočne malé aby sa v nich samotný algoritmus necyklil.
+Poslednou vecou čo sme riešili v implementácií bezkontextových gramatík bola možnosť prerušovaného generovania. Vtedy používateľ má možnosť generovať požadované heslá po ľubovoľné veľkých častiach.
+
+\section{Markovovský zdroj}
+\paragraph{}
+Po implementácií vyššie uvedeného algoritmu na generovanie hesiel pomocou pravdepodobnostných bezkontextových gramatík a odhalení nedostatkov čo sa týka pamäťovej náročnosti sme sa rozhodli implementovať ešte jednu metódu. Tou je Markovovský zdroj. Ako sme písali v predošlej kapitole, jedná sa o náhodný proces, ktorý spĺňa podmienku bezpamäťovosti. Markovovské zdroje sa veľmi často používajú práve pri generovaní prirodzeného jazyka. Práve preto boli vhodným kandidátom pre generovanie hesiel na základe znalostí získaných zo vstupného slovníka. 
+
+\paragraph{}
+Bohužiaľ táto metóda nespĺňa ani jednu z podmienok, ktoré sme si dali za cieľ pri bezkontextových gramatikách:
+\begin{itemize}
+	\item Generovať všetky reťazce zo vstupnej abecedy kratšie ako používateľom zadaná maximálna dĺžka
+	\begin{itemize}
+		\item Pravdepodobnosti jednotlivých znakov sú inicializované na 0, Markovovský zdroj ich nikdy nevygeneruje
+	\end{itemize}
+	\item Vygenerovať každý reťazec práve raz
+	\begin{itemize}
+		\item Keďže tomuto zdroju nič nebráni v tom vygenerovať viac krát počas behu to isté slovo
+	\end{itemize}
+\end{itemize}
+
+\paragraph{}
+Aj keď druhú podmienku nevedia Markovovské zdroje splniť už priamo z definície, s prvou sme sa pokúsili niečo vymyslieť. Najprv sme sa pokúšali inicializovať pravdepodobností všetkých znakov na nenulovú hodnotu. Toto však spôsobilo, že sa zdroj relatívne ľahko dostal medzi prefixy, ktoré neboli definované. Pri takýchto prefixoch majú všetky znaky rovnakú pravdepodobnosť. Dôsledkom tohto nastávalo cyklenie sa v týchto neznámych stavoch, čo spôsobovalo generovanie dlhých nezmyselných reťazcov znakov. Preto sme sa snažili nájsť spôsob ako nastaviť pravdepodobnosti nevidených stavov na nenulové, avšak dostatočne malé aby sa v nich samotný algoritmus necyklil.
+
+\paragraph{}
+Pri takto definovanom Markovovskom zdroji dokážeme všetky stavy tohto zdroja rozdeliť do dvoch množín prefixov. Videné prefixy sú také, ktoré aspoň raz nastali pri učení podľa vstupného slovníka. Takéto stavy majú pre aspoň jeden znak slovníka nenulovú pravdepodobnosť. Druhou väčšou skupinou prefixov sú nevidené prefixy, ktoré sa nevyskytli nikde vo vstupnom slovníku a preto pre všetky znaky našej abecedy je pravdepodobnosť prechodu nulová. Keďže chcem upraviť nás Markovovský zdroj tak, aby mal možnosť generovať všetky možné heslá, potrebujeme tieto nulové pravdepodobnosti zmeniť na nenulové. 
+
+\paragraph{}
+Videné stavy nemusia mať určené pravdepodobnosti pre všetky znaky nášho vstupného slovníka. Pre tieto znaky nastavíme pravdepodobnosti, ktoré v pôvodnom algoritme majú nulovú pravdepodobnosť, na hodnotu \(\varepsilon > 0\). Táto hodnota by mala vyjadrovať pravdepodobnosť prechodu zo stavu v ktorom je prefix známy (z dát vo vstupnom súbore) do stavu kedy prefix je neznámy a pravdepodobnosti všetkých znakov sú nulové. Domnievame sa, že pre správne fungovanie algoritmu by hodnota \(\varepsilon\) mala byť niekoľko násobne menšia ako najnižšia známa pravdepodobnosť pre daný prefix. Vplyv tejto konštanty na výkon Markovovského zdroja je znázornený na grafe \ref{fig:MarkovV2}.
+
+\paragraph{}
+Po prechode nášho algoritmu do stavu, ktorý nebol videný počas inicializácie programu potrebujeme nastaviť pravdepodobnosti všetkých znakov našej abecedy. Pravdepodobnosť jednotlivých znakov nastavíme na hodnotu \(\varepsilon\) ak sa jedná o znak pomocou ktorého v ďalšom kroku algoritmu vznikne videný prefix. V prípade, že znak dostane náš algoritmus do stavu s iným neznámym prefixom, nastavíme tomuto znaku pravdepodobnosť \(\delta\), ktorá je niekoľko krát menšia ako \(\varepsilon\). Opäť vplyv tejto konštanty na výsledky algoritmu je znázornený na grafe \ref{fig:MarkovV2}. Použitím hodnôt \(\varepsilon\) a \(\delta\) by sme mali dostať algoritmus používajúci Markovovský zdroj do stavu, kedy v konečnom čase dokáže vygenerovať ľubovolný počet hesiel.
+
+\paragraph{}
+Vrámci implementácie sme algoritmus používajúci Markovovský zdroj upravili tak, aby nepoužíval žiadnu pamäť navyše oproti pôvodnému návrhu. Jediná informácia, ktorú si tento algoritmus pamätá je tabuľka pravdepodobností nasledovania znakov po danom prefixe. Túto informáciu si pamätá len pre znaky a prefixy, ktoré sa vyskytujú vo vstupnom slovníku, ktorý dostal na vstupe. V prípade, že sa algoritmus dostane do stavu, kedy sa aktuálny prefix nenachádzal vo vstupnom slovníku, prejde cez všetky znaky vstupnej abecedy a každému priradí pravdepodobnosť \(\varepsilon\) ak sa vygenerovaním tohto znaku dostane do známeho prefixu alebo pravdepodobnosť \(\delta\) ak pridanie tohto znaku vedie do ďalšie stavu s neznámym prefixom.
+
+\paragraph{}
+Rozdiely vo veľkosti \(\varepsilon\) oproti najmenšej nenulovej pravdepodobnosti pre ten prefix a \(\delta\) od \(\varepsilon\) by mali zaručiť, že algoritmus sa snaží preferovať heslá, ktoré sa skladajú z kombinácií znakov videných na vstupe. Výsledky tohto algoritmu pre rôzne nastavené hodnoty koeficientov \(\varepsilon\) a \(\delta\) sú znázornené v kapitole Testy.
+
+\paragraph{}
+V tomto prípade sme zvažovali aj použitie možnosti zmeny týchto pravdepodobností počas behu programu podobne ako pri simulovanom žíhaní. Zo začiatku by sme tieto pravdepodobnosti nastavili na relatívne nízke hodnoty a s počtom hesiel vygenerovaných našim algoritmom by sa tieto hodnoty zväčšovali aby mal algoritmus vyššiu tendenciu dostať sa aj k menej pravdepodobným heslám. Bohužiaľ z dôvodu časovej tiesne sme nenašli priestor na implementáciu a preskúmanie takto upraveného algoritmu.
