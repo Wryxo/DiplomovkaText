@@ -266,8 +266,8 @@ for i in range(1, len(word)):
 
 \begin{table}[]
 \centering
-\caption{Ukážka počítania pravdepodobností - slovník}
-\label{slovnikPP}
+\caption{Ukážka počítania pravdepodobností - gramatika}
+\label{gramatikaPP}
 \begin{tabular}{ll}
 Slovo & Počet výskytov \\ \hline
 abc & 20 \\ 
@@ -286,12 +286,7 @@ b & 2 \\
 31 & 1 \\ 
 122 & 1
 \end{tabular}
-\end{table}
-
-\begin{table}[]
-\centering
-\caption{Ukážka počítania pravdepodobností - gramatika}
-\label{gramatikaPP}
+\quad
 \begin{tabular}{l|lll}
 Pravidlo & \(p_{zakladna}\) & \(p_{podretazce}\) & \(p_{rekurzivne}\) \\ \hline
 \(L1 \to c\) & 0,8035 & 0,8035 & 0,8035 \\
@@ -308,7 +303,6 @@ Pravidlo & \(p_{zakladna}\) & \(p_{podretazce}\) & \(p_{rekurzivne}\) \\ \hline
 \(D2 \to 11\) & 0,3680 & 0,3680 & 0,3680 \\
 \(D2 \to 13|21|22|23|31|32|33\) & 0,0263 & 0,0263 & 0,0263 
 \end{tabular}
-\quad
 \begin{tabular}{l|lll}
 Pravidlo & \(p_{zakladna}\) & \(p_{podretazce}\) & \(p_{rekurzivne}\) \\ \hline
 \(Z \to L2L1\) & 0,2796 & 0,2558 & 0,0061 \\
@@ -345,10 +339,12 @@ Vplyv výberu použitia uvedených spôsobov na kvalitu gramatiky a rýchlosť j
            [.L1(0) \textit{c} ]]
 
 \paragraph{}
-Dôležitým aspektom používania bezkontextových gramatík je práve spôsob generovania hesiel. Našim hlavným cieľom bolo generovanie hesiel pomocou gramatiky od najpravdepodobnejšieho z nich. Aby sme toto vedeli robiť čo najefektívnejšie, ako prvé sme si usporiadali pravidlá jednotlivých neterminálov vzostupne podľa pravdepodobnosti. Na diagramoch na začiatku podsekcie \ref{fig:stromyOdvodenia} vidíme stromy odvodenia pre 4 najpravdepodobnejšie slová gramatiky popísanej v tabuľke \ref{gramatikaPP}. Čísla v zátvorkách určujú index použitého pravidla pre daný neterminál. Výpisom týchto hodnôt do poľa v preorder poradí dostaneme vektor určujúci odvodenia daného terminálneho slova. Napríklad na základe diagramov v \ref{fig:stromyOdvodenia} slovu \emph{bbc} prislúcha vektor \((0,1,0)\).
+Dôležitým aspektom používania bezkontextových gramatík je práve spôsob generovania hesiel. Našim hlavným cieľom bolo generovanie hesiel pomocou gramatiky od najpravdepodobnejšieho z nich. Aby sme toto vedeli robiť čo najefektívnejšie, ako prvé sme si usporiadali pravidlá jednotlivých neterminálov vzostupne podľa pravdepodobnosti. Na diagramoch na začiatku sekcie \ref{fig:stromyOdvodenia} vidíme stromy odvodenia pre 4 najpravdepodobnejšie slová gramatiky popísanej v tabuľke \ref{gramatikaPP}. Čísla v zátvorkách určujú index použitého pravidla pre daný neterminál. Výpisom týchto hodnôt do poľa v preorder poradí dostaneme vektor určujúci odvodenia daného terminálneho slova. Napríklad na základe diagramov na začiatku sekcie \ref{fig:stromyOdvodenia} slovu \emph{bbc} prislúcha vektor \((0,1,0)\).
 
 \paragraph{}
 \begin{listing}
+\begin{minted}[linenos,
+			   tabsize=2]{python}
 pocet = 0
 fronta.push(pravdepodobnost([0,0,0]), (0, [0,0,0]))
 while fronta is not empty:
@@ -371,6 +367,7 @@ while fronta is not empty:
 		novyVektor[x] += 1
 		novyPrvok = (novyVektor, x)
 		fronta.push(pravdepodobnost(novyVektor), novyPrvok)
+\end{minted}
 \caption{Pseudokód generovania hesiel}
 \label{lst:pseudoGenerovanie}
 \end{listing}
@@ -379,7 +376,7 @@ while fronta is not empty:
 V \ref{lst:pseudoGenerovanie} vidíme pseudokód pre algoritmus generujúci heslá z gramatiky. Algoritmus začína pridaním dvojice rád vektora a vektor do prioritnej fronty. Táto fronta zoraďuje prvky na základe ich pravdepodobnosti. Následne algoritmus vojde do cyklu, z ktorého vyjde len ak vygeneruje požadovaný počet hesiel alebo vyprázdni celú frontu, čo sa stane v prípade, že by vygeneroval všetky možné hesla pre danú gramatiku.
 
 \paragraph{}
-Ako je vidieť na diagramoch na začiatku podsekcie \ref{fig:stromyOdvodenia}, stromy odvodenia pre heslá s rovnakým predpisom majú takú istú štruktúru. Pri zmene použitého pravidlá pre počiatočný neterminál musíme ošetriť potenciálnu zmenu štruktúry stromu odvodenia (riadky 11 až 14). Následne algoritmus prejde všetky susedné vektory práve spracovaného vektoru a pridá ich do fronty s aktualizovaným rádom a pravdepodobnosťou (riadky 16 až 20).
+Ako je vidieť na diagramoch na začiatku sekcie \ref{fig:stromyOdvodenia}, stromy odvodenia pre heslá s rovnakým predpisom majú takú istú štruktúru. Pri zmene použitého pravidlá pre počiatočný neterminál musíme ošetriť potenciálnu zmenu štruktúry stromu odvodenia (riadky 11 až 14). Následne algoritmus prejde všetky susedné vektory práve spracovaného vektoru a pridá ich do fronty s aktualizovaným rádom a pravdepodobnosťou (riadky 16 až 20).
 
 \paragraph{}
 Dôležitým prvkom tohto algoritmu je rád vektora, bez ktorého by sme generovali veľké množstvo rovnakých vektorov, ktoré by sme dostali úpravou hodnôt vektora v inom podarí. Napríklad ak by sme zvýšili najprv index na pozícii 1 a následne 3, dostali by sme to isté, ako keby sme zvýšili na pozícii 3 a potom 1. Rád vektoru je číslo určujúce pozíciu najvyššieho zmeneného indexu. Pri generovaní susedných vektorov dovolíme meniť indexy len na pozíciach vyšších alebo rovných ako je aktuálny rád vektora. Týmto zaručíme zmenu použitých pravidiel v preorder poradí vzhľadom na strom odvodenia.
@@ -476,17 +473,16 @@ Aj keď druhú podmienku nevedia Markovovské zdroje splniť už priamo z defin�
 \paragraph{}
 Pri takto definovanom Markovovskom zdroji dokážeme všetky stavy tohto zdroja rozdeliť do dvoch množín prefixov. Videné prefixy sú také, ktoré aspoň raz nastali pri učení podľa vstupného slovníka. Takéto stavy majú pre aspoň jeden znak slovníka nenulovú pravdepodobnosť. Druhou väčšou skupinou prefixov sú nevidené prefixy, ktoré sa nevyskytli nikde vo vstupnom slovníku a preto pre všetky znaky našej abecedy je pravdepodobnosť prechodu nulová. Keďže chcem upraviť nás Markovovský zdroj tak, aby mal možnosť generovať všetky možné heslá, potrebujeme tieto nulové pravdepodobnosti zmeniť na nenulové. 
 
-\paragraph{}
 \begin{table}[]
 \centering
 \caption{Ukážka Markovovského zdroja - prefix dĺžky 2}
 \label{tbl:MarkovZdroj}
-\begin{tabular}{l}
-Slovník \\ \hline
-3 abc
-2 12
-2 b1c
-1 bb1
+\begin{tabular}{ll}
+Slovník & Výskyty\\ \hline
+abc & 3 \\
+12 & 2 \\
+b1c & 2 \\
+bb1 & 2
 \end{tabular}
 \quad
 \begin{tabular}{l|llllll}
@@ -513,6 +509,7 @@ Po prechode nášho algoritmu do stavu, ktorý nebol videný počas inicializác
 \paragraph{}
 Vrámci implementácie sme algoritmus používajúci Markovovský zdroj upravili tak, aby nepoužíval žiadnu pamäť navyše oproti pôvodnému návrhu. Jediná informácia, ktorú si tento algoritmus pamätá je tabuľka pravdepodobností nasledovania znakov po danom prefixe. V pôvodnej implementácií tohto algoritmu sme si zoznam prefixov pamätali ako kľúče v asociatívnom poli. Hodnoty pre tieto kľúče boli zoznamy pravdepodobností veľkosti vstupnej abecedy. Index pravdepodobnosti odpovedal indexu znaku v zápise vstupnej abecedy, ktorému táto pravdepodobnosť prislúcha.
 
+\paragraph{}
 V implementácií upraveného Markovovského zdroja si informáciu o pravdepodobnostiach pamätáme len pre znaky a prefixy, ktoré sa vyskytujú vo vstupnom slovníku, ktorý dostal na vstupe. V prípade, že sa algoritmus dostane do stavu, kedy sa aktuálny prefix nenachádzal vo vstupnom slovníku, prejde cez všetky znaky vstupnej abecedy a každému priradí pravdepodobnosť \(\varepsilon\) ak sa vygenerovaním tohto znaku dostane do známeho prefixu alebo pravdepodobnosť \(\delta\) ak pridanie tohto znaku vedie do ďalšie stavu s neznámym prefixom. Rozdiely v čase a potrebnej pamäti na vygenerovanie pevne daného počtu hesiel je ukázaný v grafe \ref{fig:memOptimization}.
 
 \paragraph{}

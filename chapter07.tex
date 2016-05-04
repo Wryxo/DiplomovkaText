@@ -1,10 +1,10 @@
 \chapter{Záver}
 
 \paragraph{}
-V tejto práci sme sa zaoberali útokmi hrubou silou na program TrueCrypt. Podrobne sme si naštudovali fungovanie tohto programu a usúdili, že najlepším miestom útoku, na disku zašifrovaný týmto programom, bude používateľské heslo pomocou ktorého sa generujú šifrovacie kľúče. Na základe tohto poznatku sme si naštudovali možnosti útokov hrubou silou, ktoré by sme mohli pri riešení nášho problému použiť.
+V tejto práci sme sa zaoberali útokmi hrubou silou na program TrueCrypt. Podrobne sme si naštudovali fungovanie tohto programu a usúdili, že najlepším miestom útoku, na disk zašifrovaný týmto programom, bude používateľské heslo pomocou ktorého sa generujú šifrovacie kľúče. Na základe tohto poznatku sme si naštudovali možnosti útokov hrubou silou, ktoré by sme mohli pri riešení nášho problému použiť.
 
 \paragraph{}
-Pri implementácií nášho riešenia používajúceho bezkontextové gramatiky sme používali znalosti o používateľských heslách k nastaveniu nášho algoritmu tak, aby optimalizoval poradie generovaných hesiel podľa pravdepodobnosti ich správnosti. Tento algoritmus sme následne porovnávali so zaužívanou metódou Markovovských zdrojov. Keďže náš algoritmus spĺňal konkrétnejšie podmienky pri generovaní hesiel (ako sú determinizmus, generovanie celého priestoru hesiel a vyhnutie sa duplikátom), navrhli sme zmeny v modeli Markovovských zdrojov. Tieto zmeny sme taktiež implementovali a výsledný algoritmus sme taktiež porovnali s našim riešením.
+Pri implementácií nášho riešenia používajúceho bezkontextové gramatiky sme používali znalosti o používateľských heslách k nastaveniu nášho algoritmu tak, aby optimalizoval poradie generovaných hesiel podľa pravdepodobnosti ich správnosti. Tento algoritmus sme následne porovnávali so zaužívanou metódou Markovovských zdrojov. Keďže nami navrhnutý algoritmus využívajúci bezkontextové gramatiky spĺňal konkrétnejšie podmienky pri generovaní hesiel (ako sú determinizmus, generovanie celého priestoru hesiel a vyhnutie sa duplikátom), navrhli sme zmeny v modeli Markovovských zdrojov. Tieto zmeny sme taktiež implementovali a výsledný algoritmus sme taktiež porovnali s našim riešením.
 
 \paragraph{}
 Nami navrhnutá metóda využívajúca bezkontextové gramatiky dopadla v testoch veľmi podobne ako Markovovské zdroje, čo hodnotíme ako pozitívny výsledok tejto práce.
@@ -12,12 +12,12 @@ Nami navrhnutá metóda využívajúca bezkontextové gramatiky dopadla v testoc
 \section{Možnosti zlepšenia nášho riešenia}
 \subsection{Izolovanie kódu na skúšanie kandidátov}
 \paragraph{}
-Bohužiaľ sa nám kvôli nedostatku času nepodarilo izolovať kód programu TrueCrypt, ktorý je zodpovedný za overenie správnosti hesla zadaného používateľom. Nájdenie tohto kódu by mohlo pomôcť pri implementácií rýchleho algoritmu na overovanie nami generovaných kandidátov. Tento nedostatok sa dá však nahradiť použitím niektorého z voľne dostupných programov určených na útoky hrubou silou, ktorému ako vstupný slovník dodáme slovník vygenerovaný nami implementovaným programom.
+Podarilo sa nám nájsť časti kódu overujúce správnosť hesla. Bohužiaľ z dôvodu časovej tiesne sa nám nepodarilo izolovať kód programu TrueCrypt, ktorý by bez použitia samotného TrueCryptu overoval správnosť používateľom zadaného hesla. Nájdenie tohto kódu by mohlo pomôcť pri implementácií rýchleho algoritmu na overovanie nami generovaných kandidátov. Tento nedostatok sa dá však nahradiť použitím niektorého z voľne dostupných programov určených na útoky hrubou silou, ktorému ako vstupný slovník dodáme slovník vygenerovaný nami implementovaným programom.
 
 \subsection{Veľkosť potrebnej pamäte}
 \paragraph{}
-Najväčším nedostatkom samotného algoritmu využívajúceho bezkontextové gramatiky je množstvo pamäte potrebné na jeho beh. To dovoľuje použiť tento algoritmus len v prostredí s obrovským množstvom operačnej pamäte. Odstránenie tohto nedostatku vyžaduje ďalší vývoj algoritmu tak, aby dokázal generovať terminálne vetné formy gramatiky s použitím malého množstva pamäte.
+Najväčším nedostatkom samotného algoritmu využívajúceho bezkontextové gramatiky je množstvo pamäte potrebné na jeho beh. To dovoľuje použiť tento algoritmus len v prostredí s obrovským množstvom operačnej pamäte. Odstránenie tohto nedostatku vyžaduje ďalší vývoj algoritmu tak, hlavne v oblasti optimalizácie použitých dátových štruktúr a efektívnosti algoritmu na generovanie hesiel pomocou týchto gramatík.
 
 \subsection{Kompletne generujúci Markovovský zdroj}
 \paragraph{}
-Podarilo sa nám implementovať Markovovský zdroj, ktorý v konečnom čase vygeneruje všetky možné heslá zo vstupnej abecedy. Pri riešení tohto problému sme zadefinovali konštanty \(\delta\) a \(\varepsilon\), ktoré slúžia na zadefinovanie prechodov medzi známymi a neznámymi stavmi. Možným vylepšením by bolo upravovanie týchto konštánt podľa počtu hesiel, ktoré sme už vygenerovali, aby sme zvýšili šancu vygenerovania zbytku existujúcich hesiel. Toto však zahŕňa výskum, ktorý by sa dal rozobrať v samostatnej práci.
+Podarilo sa nám implementovať Markovovský zdroj, ktorý v konečnom čase vygeneruje všetky možné heslá zo vstupnej abecedy. Pri riešení tohto problému sme zadefinovali konštanty \(\delta\) a \(\varepsilon\), ktoré slúžia na zadefinovanie prechodov medzi známymi a neznámymi stavmi. Možným vylepšením by bolo upravovanie týchto konštánt za behu programu podľa počtu hesiel, ktoré sme už vygenerovali, aby sme zvýšili šancu vygenerovania zbytku existujúcich hesiel. Toto však zahŕňa výskum, ktorý by sa dal rozobrať v samostatnej práci.
