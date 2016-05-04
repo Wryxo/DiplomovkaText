@@ -8,7 +8,7 @@ V dnešnom svete fungujúcom na elektronických dátach, ktoré pre nás majú o
 Bezpečnosť šifrovania veľmi záleží na utajení kľúča. Preto je dôležité, aby nebol ľahko uhádnuteľný. Keďže počítače priniesli so sebou obrovskú výpočtovú silu, sú schopné robiť až niekoľko desiatok tisíc pokusov za sekundu snažiac sa uhádnuť tento kľúč \cite{gpu25}. Keďže rýchlosť tohto hľadania kľúča záleží hlavne od veľkosti prehľadávaného priestoru kľúčov, v praxi sa bežne používajú aspoň 256 bitov dlhé kľúče. Toto je ekvivalent 32 znakového používateľského hesla zloženého z ľubovolných znakov ASCII tabuľky.
 
 \paragraph{}
-Takéto hľadanie kľúča preberaním všetkých možností sa nazýva útok hrubou silou. Jeho podstatou je postupné generovanie možných kľúčov a následne overenie ich správnosti. V~našej práci sa zameriame na útok pri ktorom má útočník fyzický prístup k súboru s odtlačkami. Postup tohto útoku je nasledovný:
+Takéto hľadanie kľúča preberaním všetkých možností sa nazýva útok hrubou silou. Jeho podstatou je postupné generovanie možných kľúčov a následne overenie ich správnosti. V~našej práci sa zameriame na útok pri ktorom má útočník fyzický prístup k~súboru s odtlačkami. Postup tohto útoku je nasledovný:
 \begin{itemize}
 	\item Útočník vygeneruje kandidáta na overenie
 	\item Ak existuje, tak pripojí náhodný reťazec spojený s týmto heslom ku kandidátovi. Tieto reťazce zabezpečujú ochranu pred útokom pomocou predpočítaných odtlačkov
