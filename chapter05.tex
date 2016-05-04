@@ -89,13 +89,13 @@ Popri meraní času, ktorý algoritmy strávia generovaním pevne daného počtu
 
 \section{Výstupné heslá}
 \label{sec:pass}
-Po overení časovej zložitosti generovania hesiel pomocou jednotlivých algoritmov sme skúmali rôzne vlastnosti vygenerovaných slovníkov s heslami. Cieľom týchto testov bolo ukázať výhody a slabiny jednotlivých algoritmov a spraviť ich vzájomne porovnanie v zmysle šancí na čo najrýchlejšie nájdenie hľadaného heslá.
+Po overení časovej zložitosti generovania hesiel pomocou jednotlivých algoritmov sme skúmali rôzne vlastnosti vygenerovaných slovníkov s heslami. Cieľom týchto testov bolo ukázať výhody a slabiny jednotlivých algoritmov a spraviť ich vzájomne porovnanie v zmysle šancí na čo najrýchlejšie nájdenie hľadaného hesla.
 
 \subsection{Heslá zo vstupného slovníka}
 Ako prvé sme skúmali koľko hesiel zo slovníka gramatika vygenerovala po vygenerovaní určitého počtu hesiel. Na grafoch, ktoré boli výstupom tohto testu sme na vodorovnej osi znázornili počet hesiel vygenerovaných gramatikou v desiatkach tisícov hesiel zatiaľ čo na vertikálnej osi je percento hesiel slovníka, ktoré sa medzi nimi nachádzajú. Pri tomto teste sme nechali oba algoritmy generovať 100 miliónov hesiel k čomu bol použitý slovník \emph{rockyou-withcount} obsahujúci 13 331 008 rôznych hesiel dĺžky 12 a menej znakov.
 
 \paragraph{}
-Nižšie vidíme grafy znázorňujúce vývoj počtu vygenerovaných hesiel, ktoré sa nachádzajú v slovníku. Zatiaľ čo na obrázku \ref{fig:uniqMarkov} vidíme koľko unikátnych hesiel bolo vygenerovaných pomocou algoritmu využívajúceho Markovovské zdroje, tie následovne ukazujú vyššie popísanú vlastnosť zaoberajúcu sa počtom vygenerovaných hesiel patriacich do vstupného slovníka.
+Nižšie vidíme grafy znázorňujúce vývoj počtu vygenerovaných hesiel, ktoré sa nachádzajú v slovníku. Zatiaľ čo na obrázku \ref{fig:uniqMarkov} vidíme koľko unikátnych hesiel bolo vygenerovaných pomocou algoritmu využívajúceho Markovovské zdroje, tie následne ukazujú vyššie popísanú vlastnosť zaoberajúcu sa počtom vygenerovaných hesiel patriacich do vstupného slovníka.
 
 \begin{figure}[ht]
     \centering
@@ -114,7 +114,7 @@ Na obrázku \ref{fig:sameDictAcc} vidíme priebeh hodnôt, kde heslá boli porov
 \end{figure}
 
 \paragraph{Heslá z nezávislého slovníka}
-Graf \ref{fig:otherDictAcc} znázorňuje hodnoty po porovnaní vygenerovaných hesiel s iným nezávislým slovníkom. Pri tomto teste sme zobrali heslá vygenerované našimi algoritmami, ktoré na vstupe dostali slovník \emph{rockyou-withcount}. Následne sme spravili testy počtu vygenerovaných hesiel, tentokrát avšak z iného ako vstupného slovníka. V tomto prípade sme použili slovník \emph{phpbb}. Týmto sme chceme ukázať schopnosť nášho algoritmu vygenerovať slovník veľmi podobný tým používaným v praxi.
+Graf \ref{fig:otherDictAcc} znázorňuje hodnoty po porovnaní vygenerovaných hesiel s iným nezávislým slovníkom. Pri tomto teste sme zobrali heslá vygenerované našimi algoritmami, ktoré na vstupe dostali slovník \emph{rockyou-withcount}. Následne sme spravili testy počtu vygenerovaných hesiel, tentokrát avšak z iného ako vstupného slovníka. V tomto prípade sme použili slovník \emph{phpbb}. Týmto sme chceli ukázať schopnosť nášho algoritmu vygenerovať slovník veľmi podobný tým používaným v praxi.
 
 \begin{figure}[ht]
     \centering
@@ -134,7 +134,7 @@ Graf \ref{fig:otherDictAcc} znázorňuje hodnoty po porovnaní vygenerovaných h
 \end{figure}
 
 \pargraph{}
-Graf \ref{fig:Acc7} zobrazuje namerané percentá pre nami implementované algoritmy spustené tak, aby generovali heslá s dĺžkou 7. Ako vstupný slovník bol použitý \emph{rockyou-withcount} upravený aby obsahoval len heslá kratšie ako 8 znakov. Tento slovník obsahoval 4 752 979 unikátnych hesiel.
+Graf \ref{fig:Acc7} zobrazuje namerané percentá pre nami implementované algoritmy spustené tak, aby generovali heslá s dĺžkou 7. Ako vstupný slovník bol použitý \emph{rockyou-withcount} upravený tak, aby obsahoval len heslá kratšie ako 8 znakov. Tento slovník obsahoval 4 752 979 unikátnych hesiel.
 
 \begin{figure}[ht]
     \centering
@@ -143,7 +143,7 @@ Graf \ref{fig:Acc7} zobrazuje namerané percentá pre nami implementované algor
     \label{fig:Acc7}
 \end{figure}
 
-Nakoniec sme tento istý test opäť spustili na všetkých algoritmoch. Tentokrát vstupné parametre a slovník boli nastavené na generovanie hesiel maximálnej dĺžky 8. Takto upravený slonvík \emph{rockyou-withcount} obsahoval 7 717 387 hesiel z ktorých až 100 tisíc bolo vygenerovaných algoritmom používajúcim Markovovské zdroje s prefixom nastaveným na dĺžku 4. V grafe \ref{fig:Acc8} zobrazujúcom tieto dáta sme zobrazili výsledky tohto testu aj pre nami upravenú verziu Markovovských zdrojov, ktorá by mala byt schopná v konečnom čase vygenerovať heslá z celého priestoru možností. Označili sme ju ako \emph{M2-8-4} keďže sa jedná o druhú verziu Markovovských zdrojov použitých v tejto práci.
+Nakoniec sme tento istý test opäť spustili na všetkých algoritmoch. Tentokrát vstupné parametre a slovník boli nastavené na generovanie hesiel maximálnej dĺžky 8. Takto upravený slonvík \emph{rockyou-withcount} obsahoval 7 717 387 hesiel z ktorých až 100 tisíc bolo vygenerovaných algoritmom používajúcim Markovovské zdroje s prefixom nastaveným na dĺžku 4. V grafe \ref{fig:Acc8} zobrazujúcom tieto dáta sme zobrazili výsledky tohto testu aj pre nami upravenú verziu Markovovských zdrojov, ktorá by mala byť schopná v konečnom čase vygenerovať heslá z celého priestoru možností. Označili sme ju ako \emph{M2-8-4} keďže sa jedná o druhú verziu Markovovských zdrojov použitých v tejto práci.
 
 \begin{figure}[ht]
     \centering
@@ -166,20 +166,20 @@ V prípade algoritmu, ktorý používa nami upravený Markovovský zdroj pri gen
 Na základe \ref{fig:sameDictAcc} a \ref{fig:otherDictAcc} vidíme, že nami navrhnutá metóda pomocou bezkontextových gramatík negeneruje veľa hesiel zo vstupného slovníka počas prvých miliónov vygenerovaných hesiel. Tento problém by sa dal vyriešiť tým, že by sme vždy ako prvé na výstup poslali všetky heslá zo slovníka, keďže ten býva zanedbateľne malý oproti veľkosti priestoru hesiel, ktorý musíme prehľadať aby sme definitívne našli hľadané heslo.
 
 \subsection{Miery presnosti}
-Pod týmto pojmom rozumieme metriky popisujúce nielen kvantitu nami generovaných hesiel patriacich do slovníka, ale snažia sa bližšie vyhodnotiť ako rýchlo sa gramatika dostane k heslám, ktoré boli podľa vstupného slovníka označené za najpravdepodobnejšieho.
+Pod týmto pojmom rozumieme metriky popisujúce nielen kvantitu nami generovaných hesiel patriacich do slovníka, ale snažia sa bližšie vyhodnotiť ako rýchlo sa gramatika dostane k heslám, ktoré boli podľa vstupného slovníka označené za najpravdepodobnejšie.
 
 \paragraph{}
 Stĺpce tabuľky \ref{mieryPresnosti} vyjadrujú hodnoty jednotlivých metrík pre daný algoritmus.
 \begin{itemize}
 	\item \emph{PPS} - Priemerná Pozícia v Slovníku - Vyjadruje priemernú pozíciu vo vstupnom slovníku pre heslá, ktoré boli vygenerované algoritmom na výstupe
 	\item \emph{PPS \%} - Priemerná Pozícia v Slovníku - Vyjadruje percentuálnu pozíciu vrámci slovníku pre heslá, ktoré boli vygenerované algoritmom na výstupe
-	\item \emph{RPSV} - Rozdiel Pozície v Slovníku a na Výstupe - Rozdiel v pozícií na vstupe a na výstupe algoritmu prenásobený percentuálnym počtom výskytov vo vstupnom slovníku
-    \item \emph{OPSV} - Odchýlka Pozície v Slovníku a na Výstupe - Absolútna hodnota rozdielu v pozícií na vstupe a na výstupe algoritmu prenásobená percentuálnym počtom výskytov vo vstupnom slovníku
+	\item \emph{RPSV} - Rozdiel Pozície v Slovníku a na Výstupe - Rozdiel v pozícii na vstupe a na výstupe algoritmu prenásobený percentuálnym počtom výskytov vo vstupnom slovníku
+    \item \emph{OPSV} - Odchýlka Pozície v Slovníku a na Výstupe - Absolútna hodnota rozdielu v pozícii na vstupe a na výstupe algoritmu prenásobená percentuálnym počtom výskytov vo vstupnom slovníku
 \end{itemize}
 
 \[ \frac{\displaystyle\sum_{i=1}^{k}((indG_i - indS_x) * \frac{v_{ind_x}}{\sum_{j=1}^{n}v_j})}{k} \]
 
-Vzorec vyjadrujúci mieru RPSV, kde \emph{n} vyjadruje počet hesiel vo vstupnom slovníku a \emph{k} je počet výskytov hesiel zo vstupného slovníka medzi generovanými. Hodnota \emph{\(indG_i\)} určuje poradie i-tého hesla v rámci generovaného slovníka. Hodnota \emph{\(indS_i\)} vyjadruje tú istú hodnotu pre vstupný slovník. Hodnoty \emph{\(v_i\)} sú počty výskytov hesiel zadefinované vo vstupnom slovníku.
+Vzorec vyjadrujúci mieru RPSV, kde \emph{n} vyjadruje počet hesiel vo vstupnom slovníku a \emph{k} je počet výskytov hesiel zo vstupného slovníka medzi generovanými. Hodnota \emph{\(indG_i\)} určuje poradie i-tého hesla vrámci generovaného slovníka. Hodnota \emph{\(indS_i\)} vyjadruje tú istú hodnotu pre vstupný slovník. Hodnoty \emph{\(v_i\)} sú počty výskytov hesiel zadefinované vo vstupnom slovníku.
 
 \paragraph{}
 Vzorec pre mieru OPSV je takmer identický s vyššie uvedeným vzorcom, jediný rozdiel je v absolútnej hodnote rozdielu medzi pozíciami na vstupe a na výstupe.
