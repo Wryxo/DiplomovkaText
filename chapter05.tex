@@ -8,7 +8,14 @@ Testy boli spúšťané na procesore Intel® Core™ i5-4690K s rýchlosťou 3.5
 
 \section{Časová náročnosť}
 \label{sec:time}
-V tomto základnom teste sme merali čas behu algoritmov pre jednotlivé parametre spustenia. Pre všetky testy používame slovník \emph{\href{http://downloads.skullsecurity.org/passwords/rockyou-withcount.txt.bz2}{rockyou-withcount}} stiahnutý z nášho zdroja slovníkov \cite{dictionaries}. Slovník sme upravovali aby obsahoval len heslá zodpovedajúce maximálnej dĺžke hesiel, ktoré generuje bezkontextová gramatika. Týmto sme znížili pravdepodobnosť Markovovského zdroja generovať heslá dlhšie ako stanovené maximum pre gramatiku ako je vidieť na grafe \ref{fig:sizeDist}. Stĺpec \emph{d} tabuľky \ref{tbl:rockyouTime} označuje maximálnu dĺžku generovaných hesiel zatiaľ čo stĺpec \emph{p} vyjadruje maximálnu veľkosť jednoduchého neterminálu v prípade bezkontextovej gramatiky zatiaľ čo pri Markovovskom zdroji vyjadruje dĺžku prefixu podľa ktorého sa tento zdroj rozhoduje. V stĺpci \emph{GEN} je čas potrebný na natrénovanie jednotlivých algoritmov na vstupný slovník. Ostatné stĺpce ukazujú čas, ktorý jednotlivé algoritmy potrebujú na vygenerovanie daného počtu hesiel. Grafy \ref{fig:generateTime}, \ref{fig:pBasedtime} a \ref{fig:prepareTime} ukazujú vplyv parametrov na rýchlosť behu algoritmov. 
+V tomto základnom teste sme merali čas behu algoritmov pre jednotlivé parametre spustenia. Pod názvom \emph{MarkovV2} rozumieme nami upravený Markovovský zdroj, ktorý generuje všetky možné kombinácie. Pre všetky testy používame slovník \emph{\href{http://downloads.skullsecurity.org/passwords/rockyou-withcount.txt.bz2}{rockyou-withcount}} stiahnutý z nášho zdroja slovníkov \cite{dictionaries}. Slovník sme upravovali aby obsahoval len heslá zodpovedajúce maximálnej dĺžke hesiel, ktoré generuje bezkontextová gramatika. Týmto sme znížili pravdepodobnosť Markovovského zdroja generovať heslá dlhšie ako stanovené maximum pre gramatiku ako je vidieť na grafe \ref{fig:sizeDist}, kde \emph{rockyou} je nezmenený slovník a \emph{rockyou6} je slovník obmedzený na slová kratšie ako 7 znakov. Stĺpec \emph{d} tabuľky \ref{tbl:rockyouTime} označuje maximálnu dĺžku generovaných hesiel zatiaľ čo stĺpec \emph{p} vyjadruje maximálnu veľkosť jednoduchého neterminálu v prípade bezkontextovej gramatiky zatiaľ čo pri Markovovskom zdroji vyjadruje dĺžku prefixu podľa ktorého sa tento zdroj rozhoduje. V stĺpci \emph{GEN} je čas potrebný na~natrénovanie jednotlivých algoritmov na vstupný slovník. Ostatné stĺpce ukazujú čas, ktorý jednotlivé algoritmy potrebujú na vygenerovanie daného počtu hesiel. Grafy \ref{fig:generateTime}, \ref{fig:fixedNTime} a \ref{fig:prepareTime} ukazujú vplyv parametrov na rýchlosť behu algoritmov. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\textwidth]{sizeDist}
+    \caption{Distribúcia dĺžok vygenerovaných hesiel}
+    \label{fig:sizeDist}
+\end{figure}
 
 \begin{table}[]
 \centering
@@ -20,6 +27,9 @@ CFG    & 6 & 2 & 20,983   & 0,576  & 3,116  & 6,235  & 32,584 & 65,005  & 345,18
 CFG    & 6 & 3 & 18,592    & 0,632  & 3,290  & 6,730  & 33,276 & 69,801  & 357,483 \\
 CFG    & 6 & 4 & 18,128   & 0,623  & 3,508   & 6,576   & 31,971 & 65,760  & 331,291 \\
 CFG    & 6 & 5 & 44,653 & 0,615 & 3,179 & 54,054 & 81,957 & 116,699 & 397,522 \\
+Markov & 6 & 2 & 14,864 & 0,699 & 3,774 & 7,398 & 36,241 & 74,244 & 384,801 \\
+Markov & 6 & 3 & 17,705 & 0,755 & 4,098 & 7,612 & 38,43  & 75,553 & 379,393 \\
+Markov & 6 & 4 & 23,36  & 0,726 & 3,768 & 7,564 & 37,882 & 77,203 & 383,682 \\
 MarkovV2 & 6 & 2 & 13,170     & 2,709  & 13,168  & 27,195  & 140,057 & 278,877  & 1394,651 \\
 MarkovV2 & 6 & 3 & 15,446     & 3,350  & 16,948  & 33,538  & 169,359 & 340,262  & 1681,150 \\
 MarkovV2 & 6 & 4 & 16,957     & 3,606  & 18,043  & 36,435 & 181,323 & 360,489  & 1819,145 \\ \hline
@@ -28,6 +38,9 @@ CFG    & 7 & 2 & 45,993    & 0,602  & 3,099  & 6,382  & 32,200  & 65,867  & 336,
 CFG    & 7 & 3 & 40,868   & 0,574   & 3,185  & 6,271  & 32,379 & 64,441  & 350,051 \\
 CFG    & 7 & 4 & 39,640   & 0,630  & 3,269  & 6,496  & 32,512 & 66,543  & 337,664 \\
 CFG    & 7 & 5 & 65,633 & 0,564 & 3,284 & 6,835 & 37,462  & 72,955 & 353,728 \\
+Markov & 7 & 2 & 36,147 & 0,742 & 3,848 & 7,69  & 36,996 & 75,469 & 386,964 \\
+Markov & 7 & 3 & 40,321 & 0,744 & 3,714 & 7,515 & 38,572 & 75,271 & 378,42  \\
+Markov & 7 & 4 & 49,719 & 2,335 & 3,855 & 7,423 & 38,86  & 77,215 & 390,586 \\
 MarkovV2 & 7 & 2 & 31,485  & 2,925  & 14,684  & 29,606  & 145,325  & 298,865  & 1456,182 \\
 MarkovV2 & 7 & 3 & 34,116     & 3,478  & 16,919  & 33,483  & 172,056 & 339,607  & 1699,369  \\
 MarkovV2 & 7 & 4 & 37,530     & 3,728   & 18,540 & 37,156 & 198,664 & 390,051 & 1897,855 \\ \hline
@@ -36,11 +49,28 @@ CFG    & 8 & 2 & 80,10   & 0,640  & 3,209  & 6,545  & 36,207 & 73,112  & 375,780
 CFG    & 8 & 3 & 69,53   & 0,667  & 3,472   & 7,066  & 37,623 & 73,635  & 379,328 \\
 CFG    & 8 & 4 & 65,34   & 0,684  & 3,567  & 7,155  & 35,082 & 72,635  & 372,207 \\
 CFG    & 8 & 5 & 90,795 & 0,614 & 3,590 & 7,132 & 37,472 & 73,995 & 366,613 \\
+Markov & 8 & 2 & 62,266 & 0,727 & 3,788 & 7,684 & 38,614 & 76,573 & 380,002 \\
+Markov & 8 & 3 & 70,651 & 0,719 & 3,962 & 7,37  & 38,298 & 77,763 & 391,823 \\
+Markov & 8 & 4 & 84,152 & 0,736 & 3,713 & 7,648 & 37,6   & 76,351 & 380,466 \\
 MarkovV2 & 8 & 2 & 51,49     & 2,965  & 15,080  & 30,405  & 148,388  & 294,671  & 1498,122 \\
 MarkovV2 & 8 & 3 & 57,23     & 3,522  & 17,446  & 34,795 & 176,967 & 354,904  & 1777,306 \\
 MarkovV2 & 8 & 4 & 64,75     & 4,011 & 19,731 & 39,810 & 192,103 & 395,619  & 2002,240
 \end{tabular}
 \end{table}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\textwidth]{fixedNTime}
+    \caption{Čas potrebný na vygenerovanie 500 000 hesiel podľa parametru p}
+    \label{fig:fixedNTime}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\textwidth]{prepareTime}
+    \caption{Čas učenia pravdepodobností podľa parametru p}
+    \label{fig:prepareTime}
+\end{figure}
 
 \begin{table}[]
 \centering
@@ -52,6 +82,9 @@ CFG    & 6 & 2 & 17,30   & 19,05  & 33,26  & 46,72  & 117,80 & 181,35  & 518,33 
 CFG    & 6 & 3 & 22,25    & 29,97  & 36,38  & 41,95  & 70,78 & 96,19  & 462,72 \\
 CFG    & 6 & 4 & 148,04   & 263,18  & 269,29   & 275,54  & 310,76 & 346,15  & 608,03 \\
 CFG    & 6 & 5 & 4661,65 & 6116,98 & 6117,87 & 6119,98 & 6143,38 & 6155,72 & 6349,73 \\
+Markov & 6 & 2 & 37,64   & 37,66   & 37,64   & 37,63   & 37,82   & 37,89   & 37,80   \\
+Markov & 6 & 3 & 488,00  & 488,04  & 488,04  & 488,02  & 488,14  & 488,28  & 488,10  \\
+Markov & 6 & 4 & 3661,08 & 3661,22 & 3661,31 & 3661,08 & 3661,39 & 3661,28 & 3661,25 \\
 MarkovV2 & 6 & 2 & 27,60     & 31,55  & 31,62  & 31,66  & 31,54 & 31,52  & 31,41 \\
 MarkovV2 & 6 & 3 & 122,99     & 152,29  & 152,43  & 152,53  & 152,25 & 152,12 & 152,52 \\
 MarkovV2 & 6 & 4 & 604,64     & 711,12  & 710,98  & 711,14 & 711,20 & 711,02 & 711,26 \\ \hline
@@ -60,6 +93,9 @@ CFG    & 7 & 2 & 18,76    & 23,77  & 34,06  & 44,46  & 108,55  & 198,31  & 693,5
 CFG    & 7 & 3 & 24,29   & 32,77   & 39,38  & 45,56  & 88,24 & 137,11  & 464,00 \\
 CFG    & 7 & 4 & 149,79   & 267,46  & 275,87  & 284,02  & 330,79 & 377,35  & 669,59 \\
 CFG    & 7 & 5 & 4664,87 & 6120,33 & 6124,66 & 6128,76 & 6156,38 & 6188,21 & 6430,26 \\
+Markov & 7 & 2 & 38,25   & 38,41   & 38,49   & 38,36   & 38,28   & 38,31   & 38,46   \\
+Markov & 7 & 3 & 643,87  & 644,04  & 643,85  & 643,77  & 643,89  & 643,96  & 643,96  \\
+Markov & 7 & 4 & 5278,48 & 5278,41 & 5278,29 & 5278,44 & 5278,47 & 5278,63 & 5278,55 \\
 MarkovV2 & 7 & 2 & 31,01    & 36,36  & 36,16  & 36,13 & 36,17  & 36,10  & 36,07 \\
 MarkovV2 & 7 & 3 & 168,70     & 210,99 & 211,10  & 211,02 & 210,94 & 210,85  & 210,79  \\
 MarkovV2 & 7 & 4 & 928,83     & 1098,33   & 1098,08 & 1098,03 & 1098,09 & 1098,05  & 1098,26 \\ \hline
@@ -68,6 +104,9 @@ CFG    & 8 & 2 & 25,26   & 36,61  & 47,14  & 58,01  & 121,60 & 184,49  & 1540,53
 CFG    & 8 & 3 & 37,71   & 46,67  & 60,41   & 75,75  & 185,75 & 317,56  & 1274,87 \\
 CFG    & 8 & 4 & 214,79   & 279,68  & 289,30  & 298,76  & 352,48 & 407,48  & 757,99 \\
 CFG    & 8 & 5 & 4674,50 & 6133,58 & 6139,11 & 6144,55 & 6174,67 & 6204,51 & 6422,41 \\
+Markov & 8 & 2 & 38,57   & 38,73   & 38,82   & 38,7    & 38,63   & 38,68   & 38,74   \\
+Markov & 8 & 3 & 787,69  & 787,9   & 787,97  & 787,91  & 787,99  & 787,89  & 787,96  \\
+Markov & 8 & 4 & 6926,67 & 6927,08 & 6927,04 & 6926,72 & 6926,68 & 6926,82 & 6924,64 \\
 MarkovV2 & 8 & 2 & 34,33     & 40,45  & 40,46  & 40,35 & 40,62 & 40,37 & 40,60 \\
 MarkovV2 & 8 & 3 & 211,16    & 266,37  & 266,44  & 266,60 & 266,44 & 266,38  & 266,35 \\
 MarkovV2 & 8 & 4 & 1232,79   & 1467,32 & 1467,44 & 1468,33 & 1467,73 & 1467,65  & 1467,46
@@ -85,7 +124,7 @@ MarkovV2 & 8 & 4 & 1232,79   & 1467,32 & 1467,44 & 1468,33 & 1467,73 & 1467,65  
 Popri meraní času, ktorý algoritmy strávia generovaním pevne daného počtu hesiel sme sledovali použitú pamäť počas behu programu. Výkyvy v niektorých hodnotách boli spôsobené manažovaním pamäte operačným systémom, kedy časti použitej pamäte odkopíroval na disk.
 
 \paragraph{}
-Ďalej sme taktiež porovnali množstvo pamäte, ktorú potrebuje Markovovský zdroj ak si pamätá kompletnú maticu prefixov a znakov abecedy s optimalizáciou, ktorú sme popísali v sekcii \ref{sec:Markov}. Na výslednom grafe \ref{fig:memOptimization} môžme vidieť, že pri krátkych prefixoch není táto optimalizácia efektívna nakoľko pamäť navyše potrebná na použitie asociatívneho poľa je relatívne vysoká. Pri väčšej dĺžke prefixu už začína byť rozdiel v potrebnej pamäti signifikantný.
+Ďalej sme taktiež porovnali množstvo pamäte, ktorú potrebuje Markovovský zdroj ak si pamätá kompletnú maticu prefixov a znakov abecedy s optimalizáciou, ktorú sme popísali v sekcii \ref{sec:Markov}. Na výslednom grafe \ref{fig:memOptimization} môžme vidieť, že pri krátkych prefixoch nie je táto optimalizácia efektívna nakoľko pamäť navyše potrebná na použitie asociatívneho poľa je relatívne vysoká. Pri väčšej dĺžke prefixu už začína byť rozdiel v potrebnej pamäti signifikantný.
 
 \begin{figure}[ht]
     \centering
@@ -96,7 +135,7 @@ Popri meraní času, ktorý algoritmy strávia generovaním pevne daného počtu
 
 \section{Výstupné heslá}
 \label{sec:pass}
-Po overení časovej zložitosti generovania hesiel pomocou jednotlivých algoritmov sme skúmali rôzne vlastnosti vygenerovaných slovníkov s heslami. Cieľom týchto testov bolo ukázať výhody a slabiny jednotlivých algoritmov a spraviť ich vzájomne porovnanie v zmysle šancí na čo najrýchlejšie nájdenie hľadaného hesla.
+Po overení časovej zložitosti generovania hesiel pomocou jednotlivých algoritmov sme skúmali rôzne vlastnosti vygenerovaných slovníkov s heslami. Cieľom týchto testov bolo ukázať výhody a slabiny jednotlivých algoritmov a spraviť ich vzájomne porovnanie v~zmysle šancí na čo najrýchlejšie nájdenie hľadaného hesla.
 
 \subsection{Heslá zo vstupného slovníka}
 Ako prvé sme skúmali koľko hesiel zo slovníka gramatika vygenerovala po vygenerovaní určitého počtu hesiel. Na grafoch, ktoré boli výstupom tohto testu sme na vodorovnej osi znázornili počet hesiel vygenerovaných gramatikou v desiatkach tisícov hesiel zatiaľ čo na vertikálnej osi je percento hesiel slovníka, ktoré sa medzi nimi nachádzajú. Pri tomto teste sme nechali oba algoritmy generovať 100 miliónov hesiel k čomu bol použitý slovník \emph{rockyou-withcount} obsahujúci 13 331 008 rôznych hesiel dĺžky 12 a menej znakov.
@@ -111,7 +150,7 @@ Zatiaľ čo na obrázku \ref{fig:uniqMarkov} vidíme koľko unikátnych hesiel b
     \label{fig:uniqMarkov}
 \end{figure}
 \paragraph{Heslá zo vstupného slovníka}
-Na obrázku \ref{fig:sameDictAcc} vidíme priebeh hodnôt, kde heslá boli porovnávané so vstupným slonvíkom. Vidíme, že nami definované a implementované riešenie pomocou bezkontextových gramatík má na rozdiel od Markovovského zdroja omnoho pomalší rast počtu hesiel patriacich do slovníka. Pri 100 miliónoch generovaných hesiel to je niečo málo pod 700 tisíc.
+Na obrázku \ref{fig:sameDictAcc} vidíme priebeh hodnôt, kde heslá boli porovnávané so vstupným slovníkom. Vidíme, že nami definované a implementované riešenie pomocou bezkontextových gramatík má na rozdiel od Markovovského zdroja omnoho pomalší rast počtu hesiel patriacich do slovníka. Pri 100 miliónoch generovaných hesiel to je niečo málo pod 700 tisíc.
 
 \begin{figure}[ht]
     \centering
@@ -150,7 +189,7 @@ Graf \ref{fig:Acc7} zobrazuje namerané percentá pre nami implementované algor
     \label{fig:Acc7}
 \end{figure}
 
-Nakoniec sme tento istý test opäť spustili na všetkých algoritmoch. Tentokrát vstupné parametre a slovník boli nastavené na generovanie hesiel maximálnej dĺžky 8. Takto upravený slonvík \emph{phpbb-withcount} obsahoval 143 675 hesiel. V grafe \ref{fig:Acc8} zobrazujúcom tieto dáta sme zobrazili výsledky tohto testu aj pre nami upravenú verziu Markovovských zdrojov, ktorá by mala byť schopná v konečnom čase vygenerovať heslá z celého priestoru možností. Označili sme ju ako \emph{M2-8-4} keďže sa jedná o druhú verziu Markovovských zdrojov použitých v tejto práci.
+Nakoniec sme tento istý test opäť spustili na všetkých algoritmoch. Tentokrát vstupné parametre a slovník boli nastavené na generovanie hesiel maximálnej dĺžky 8. Takto upravený slovník \emph{phpbb-withcount} obsahoval 143 675 hesiel. V grafe \ref{fig:Acc8} zobrazujúcom tieto dáta sme zobrazili výsledky tohto testu aj pre nami upravenú verziu Markovovských zdrojov, ktorá by mala byť schopná v konečnom čase vygenerovať heslá z celého priestoru možností. Označili sme ju ako \emph{M2-8-4} keďže sa jedná o druhú verziu Markovovských zdrojov použitých v tejto práci.
 
 \begin{figure}[ht]
     \centering
@@ -180,7 +219,7 @@ Stĺpce tabuľky \ref{mieryPresnosti} vyjadrujú hodnoty jednotlivých metrík p
 \begin{itemize}
 	\item \emph{PPS} - Priemerná Pozícia v Slovníku - Vyjadruje priemernú pozíciu vo vstupnom slovníku pre heslá, ktoré boli vygenerované algoritmom na výstupe
 	\item \emph{PPS \%} - Priemerná Pozícia v Slovníku - Vyjadruje percentuálnu pozíciu vrámci slovníku pre heslá, ktoré boli vygenerované algoritmom na výstupe
-	\item \emph{RPSV} - Rozdiel Pozície v Slovníku a na Výstupe - Rozdiel v pozícii na vstupe a na výstupe algoritmu prenásobený percentuálnym počtom výskytov vo vstupnom slovníku
+	\item \emph{RPSV} - Rozdiel Pozície v Slovníku a na Výstupe - Rozdiel v pozícii na vstupe a~na~výstupe algoritmu prenásobený percentuálnym počtom výskytov vo vstupnom slovníku
     \item \emph{OPSV} - Odchýlka Pozície v Slovníku a na Výstupe - Absolútna hodnota rozdielu v pozícii na vstupe a na výstupe algoritmu prenásobená percentuálnym počtom výskytov vo vstupnom slovníku
 \end{itemize}
 
@@ -229,4 +268,4 @@ Markov & 12 & 4 & 4609712    & 34,5       & 2,191 & 2,224
 \end{table}
 
 \paragraph{}
-Z tabuľky \ref{mieryPresnosti} môžme vidieť, že obom našim algoritmom prospieva navýšenie vstupnej informácie o heslách. Toto je vidieť ako na percentuálnych hodnotách priemernej pozície v slovníku, tak aj na rozdieloch pozícií medzi vstupným a vygenerovaným slovníkom. Hodnota rozdielov pozícií má vyjadrovať presnosť generovania hesiel v správnom poradí kedy algoritmus je odmenený znížením skóre ak sa mu podarí vygenerovať niektoré heslo skôr, než sa nachádza vo vstupnom slovníku. Posledná miera \emph{odchýlka pozície v slovníku} má vyjadrovať absolútny rozdiel pozícií oproti vstupnému slovníku bez ohľadu na to, či heslo bolo vygenerované skôr alebo neskôr ako vo vstupnom slovníku. Malý rozdiel týchto hodnôt naznačuje, že väčšina hesiel, ktoré boli generované našimi algoritmami bola vygenerovaná neskôr ako bol ich výskyt vo vstupnom slovníku.
+Z tabuľky \ref{mieryPresnosti} môžme vidieť, že obom našim algoritmom prospieva navýšenie vstupnej informácie o heslách. Toto je vidieť ako na percentuálnych hodnotách priemernej pozície v slovníku, tak aj na rozdieloch pozícií medzi vstupným a vygenerovaným slovníkom. Hodnota rozdielov pozícií má vyjadrovať presnosť generovania hesiel v správnom poradí kedy algoritmus je odmenený znížením skóre ak sa mu podarí vygenerovať niektoré heslo skôr, než sa nachádza vo vstupnom slovníku. Posledná miera \emph{odchýlka pozície v slovníku} má vyjadrovať absolútny rozdiel pozícií oproti vstupnému slovníku bez~ohľadu na to, či heslo bolo vygenerované skôr alebo neskôr ako vo vstupnom slovníku. Malý rozdiel týchto hodnôt naznačuje, že väčšina hesiel, ktoré boli generované našimi algoritmami bola vygenerovaná neskôr ako bol ich výskyt vo vstupnom slovníku.
